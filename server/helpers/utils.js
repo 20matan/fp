@@ -11,4 +11,4 @@ const validate = (data, fields) => {
   return d;
 };
 
-export { validate };
+export default { validate };
