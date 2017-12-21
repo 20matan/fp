@@ -10,13 +10,8 @@ function load(req, res, next, id) {
     .catch(e => next(e));
 }
 
-function get(req, res, next) {
-  const { listId } = req.query;
-  List.get(listId)
-  .then((listFromDB) => {
-    res.json(listFromDB);
-  })
-  .catch(next);
+function get(req, res) {
+  return res.json(req.list);
 }
 
 function create(req, res, next) {
@@ -32,12 +27,11 @@ function create(req, res, next) {
 }
 
 function update(req, res, next) {
-  // const user = req.user;
-  //
-  // user.save(req.body)
-  //   .then(savedUser => res.json(savedUser))
-  //   .catch(e => next(e));
-  next();
+  const reqList = req.list;
+
+  reqList.save(req.body)
+    .then(savedList => res.json(savedList))
+    .catch(e => next(e));
 }
 
 function list(req, res, next) {
@@ -48,10 +42,10 @@ function list(req, res, next) {
 }
 
 function remove(req, res, next) {
-  // const user = req.user;
-  // user.remove()
-  //   .then(deletedUser => res.json(deletedUser))
-  //   .catch(e => next(e));
+  const reqList = req.list;
+  reqList.remove()
+    .then(deletedList => res.json(deletedList))
+    .catch(e => next(e));
   next();
 }
 
@@ -68,4 +62,17 @@ function addUser(req, res, next) {
   .catch(e => next(e));
 }
 
-export default { get, create, update, list, load, remove, addUser };
+function removeUser(req, res, next) {
+  const { username } = req.body;
+  const listInReq = req.list;
+  if (!listInReq.users.includes(username)) {
+    next(new Error('The user is not in the queue'));
+    return;
+  }
+  listInReq.users.pull(username);
+  listInReq.save()
+  .then(savedList => res.json(savedList))
+  .catch(e => next(e));
+}
+
+export default { get, create, update, list, load, remove, addUser, removeUser };

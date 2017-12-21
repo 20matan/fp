@@ -21,6 +21,7 @@ router.route('/:listId')
   .delete(listCtrl.remove);
 
 router.post('/:listId/addUser', listCtrl.addUser);
+router.delete('/:listId/removeUser', listCtrl.removeUser);
 
 router.param('listId', listCtrl.load);
 

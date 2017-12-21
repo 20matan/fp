@@ -49,11 +49,14 @@ const ListSchema = new mongoose.Schema({
 ListSchema.statics = {
   get(id) {
     return this.findById(id)
-      .exec()
-      .then((list) => {
-        if (list) {
-          return list;
+      // .exec()
+      .then((listFromDB) => {
+        console.log('list', id, listFromDB);
+        if (listFromDB) {
+          console.log('RETURN LIST');
+          return Promise.resolve(listFromDB);
         }
+        console.log('err');
         const err = new APIError('No such list exists!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
@@ -77,9 +80,9 @@ ListSchema.statics = {
     })
     .catch(e => Promise.reject(e));
   },
-  byRegistered(username) {
-    return this.find({});
-  }
+  // byRegistered(username) {
+  //   return this.find({});
+  // }
 };
 
 export default mongoose.model('List', ListSchema);
