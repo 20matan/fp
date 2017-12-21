@@ -58,6 +58,10 @@ function remove(req, res, next) {
 function addUser(req, res, next) {
   const { username } = req.body;
   const listInReq = req.list;
+  if (listInReq.users.includes(username)) {
+    next(new Error('User already in the queue'));
+    return;
+  }
   listInReq.users.push(username);
   listInReq.save()
   .then(savedList => res.json(savedList))
