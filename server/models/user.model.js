@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
   drivingLicense: {
     type: String,
   },
-  creditNumber: {
+  creditCard: {
     type: String,
   },
   createdAt: {

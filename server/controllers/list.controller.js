@@ -1,4 +1,5 @@
 import List from '../models/list.model';
+import User from '../models/user.model';
 import { validate } from '../helpers/utils';
 
 function load(req, res, next, id) {
@@ -16,7 +17,7 @@ function get(req, res) {
 
 function create(req, res, next) {
   const listData = validate(req.body,
-    ['creator', 'type', 'meta']
+    ['creator', 'title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta', ]
   );
   const newList = new List(
     listData
@@ -26,8 +27,14 @@ function create(req, res, next) {
   .catch(e => next(e));
 }
 
+// TODO: make sure you're the list creator / superadmin
 function update(req, res, next) {
   const reqList = req.list;
+
+  if (reqList.users && reqList.users.length > 0) {
+    next(new Error('Cant edit the queue, there are people in it'));
+    return;
+  }
 
   reqList.save(req.body)
     .then(savedList => res.json(savedList))
@@ -43,10 +50,13 @@ function list(req, res, next) {
 
 function remove(req, res, next) {
   const reqList = req.list;
+  if (reqList.users && reqList.users.length > 0) {
+    next(new Error('Cant remove the queue, there are people in it'));
+    return;
+  }
   reqList.remove()
     .then(deletedList => res.json(deletedList))
     .catch(e => next(e));
-  next();
 }
 
 function addUser(req, res, next) {
@@ -56,10 +66,29 @@ function addUser(req, res, next) {
     next(new Error('User already in the queue'));
     return;
   }
-  listInReq.users.push(username);
-  listInReq.save()
-  .then(savedList => res.json(savedList))
-  .catch(e => next(e));
+
+  // validates the user's data
+  User.get(username)
+  .then((user) => {
+    if (!user.creditCard) {
+      next(new Error('User has to place credit card to continue'));
+      return;
+    }
+    // now validates the required data for the list
+    if (listInReq.type === 'car' && !user.drivingLicense) {
+      next(new Error('Please provide your driving license for being added to this queue'));
+      return;
+    }
+    if (listInReq.type === 'flight' && !user.darkon) {
+      next(new Error('Please provide your "darkon" for being added to this queue'));
+      return;
+    }
+
+    listInReq.users.push(username);
+    listInReq.save()
+    .then(savedList => res.json(savedList))
+    .catch(e => next(e));
+  });
 }
 
 function removeUser(req, res, next) {
