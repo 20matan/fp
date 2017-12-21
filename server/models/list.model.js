@@ -20,6 +20,10 @@ const ListSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
+  users: {
+    type: Array,
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -60,6 +64,21 @@ ListSchema.statics = {
       .skip(+skip)
       .limit(+limit)
       .exec();
+  },
+  byCreators(username) {
+    return this.find({ creator: username })
+    .exec()
+    .then((lists) => {
+      if (lists) {
+        return lists;
+      }
+      const err = new APIError('No such lists exists!', httpStatus.NOT_FOUND);
+      return Promise.reject(err);
+    })
+    .catch(e => Promise.reject(e));
+  },
+  byRegistered(username) {
+    return this.find({});
   }
 };
 

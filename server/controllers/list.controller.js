@@ -1,14 +1,14 @@
 import List from '../models/list.model';
 import { validate } from '../helpers/utils';
 
-// function load(req, res, next, id) {
-//   List.get(id)
-//     .then((user) => {
-//       req.user = user; // eslint-disable-line no-param-reassign
-//       return next();
-//     })
-//     .catch(e => next(e));
-// }
+function load(req, res, next, id) {
+  List.get(id)
+    .then((listFromDB) => {
+      req.list = listFromDB; // eslint-disable-line no-param-reassign
+      return next();
+    })
+    .catch(e => next(e));
+}
 
 function get(req, res, next) {
   const { listId } = req.query;
@@ -19,26 +19,16 @@ function get(req, res, next) {
   .catch(next);
 }
 
-function create(req, res) {
-  console.log('body123', req.body);
+function create(req, res, next) {
   const listData = validate(req.body,
     ['creator', 'type', 'meta']
   );
-  console.log('fffffff', listData);
   const newList = new List(
     listData
   );
   newList.save()
   .then(savedList => res.json(savedList))
-  .catch((e) => {
-    console.error(e);
-    res.send('error');
-  });
-  //
-  // user.save()
-  //   .then(savedUser => res.json(savedUser))
-  //   .catch(e => next(e));
-  // next();
+  .catch(e => next(e));
 }
 
 function update(req, res, next) {
@@ -51,12 +41,10 @@ function update(req, res, next) {
 }
 
 function list(req, res, next) {
-  console.log('ahhhh list', req.query);
   const { limit = 50, skip = 0 } = req.query;
   List.list({ limit, skip })
     .then(lists => res.json(lists))
     .catch(e => next(e));
-  // next();
 }
 
 function remove(req, res, next) {
@@ -67,4 +55,13 @@ function remove(req, res, next) {
   next();
 }
 
-export default { get, create, update, list, remove };
+function addUser(req, res, next) {
+  const { username } = req.body;
+  const listInReq = req.list;
+  listInReq.users.push(username);
+  listInReq.save()
+  .then(savedList => res.json(savedList))
+  .catch(e => next(e));
+}
+
+export default { get, create, update, list, load, remove, addUser };

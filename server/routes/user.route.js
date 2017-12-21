@@ -10,7 +10,7 @@ router.route('/')
   /** POST /api/users - Create new user */
   .post(userCtrl.create);
 
-router.route('/:userId')
+router.route('/:username')
   /** GET /api/users/:userId - Get user */
   .get(userCtrl.get)
 
@@ -20,7 +20,9 @@ router.route('/:userId')
   /** DELETE /api/users/:userId - Delete user */
   .delete(userCtrl.remove);
 
+router.get('/:username/createdLists', userCtrl.getCreatedLists);
+
 /** Load user when API with userId route parameter is hit */
-router.param('userId', userCtrl.load);
+router.param('username', userCtrl.load);
 
 export default router;
