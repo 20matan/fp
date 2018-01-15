@@ -1,6 +1,6 @@
 import User from '../models/user.model';
 import List from '../models/list.model';
-import { valate } from '../helpers/utils';
+import { validate } from '../helpers/utils';
 
 function load(req, res, next, username) {
   User.get(username)
