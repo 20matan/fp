@@ -1,7 +1,10 @@
+import _ from 'lodash';
 import Promise from 'bluebird';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
+
+const like = param => new RegExp(param, 'i');
 
 /**
  * List Schema
@@ -81,8 +84,20 @@ ListSchema.statics = {
         return Promise.reject(err);
       });
   },
-  list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
+  list(query) {
+    const { skip = 0, limit = 50 } = query;
+    const queryFilter = query;
+    delete queryFilter.skip;
+    delete queryFilter.limit;
+    const likeQuery = {};
+    _.each(queryFilter, (val, key) => {
+      if (Number.isInteger(Number.parseInt(val, 10))) {
+        likeQuery[key] = val;
+      } else {
+        likeQuery[key] = like(val);
+      }
+    });
+    return this.find(likeQuery)
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)
