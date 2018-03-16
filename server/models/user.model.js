@@ -1,19 +1,23 @@
-import Promise from 'bluebird';
-import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import APIError from '../helpers/APIError';
+import Promise from 'bluebird'
+import mongoose from 'mongoose'
+import httpStatus from 'http-status'
+import APIError from '../helpers/APIError'
 
 /**
  * User Schema
  */
 const UserSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
   username: {
     type: String,
     required: true
   },
-  password: {
+  email: {
     type: String,
-    required: true,
+    required: true
   },
   mobileNumber: {
     type: String,
@@ -31,7 +35,7 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
+})
 
 /**
  * Add your
@@ -44,7 +48,7 @@ const UserSchema = new mongoose.Schema({
  * Methods
  */
 UserSchema.method({
-});
+})
 
 /**
  * Statics
@@ -54,13 +58,31 @@ UserSchema.statics = {
     return this.findOne({ username })
       .exec()
       .then((user) => {
-        console.log('user', user, username);
+        console.log('user', user, username)
         if (user) {
-          return user;
+          return user
         }
-        const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
-        return Promise.reject(err);
-      });
+        const err = new APIError('No such user exists!', httpStatus.NOT_FOUND)
+        return Promise.reject(err)
+      })
+  },
+
+  findOrCreate(id, data) {
+    return this.findOne({ id })
+    .then((user) => {
+      if (user) {
+        console.log('createIfNotExist - user exist')
+        return { user, created: false }
+      }
+
+      console.log('createIfNotExist - user does not exist, wil try to create one now')
+      const newUser = new this(data)
+      return newUser.save()
+      .then(() => {
+        console.log('created the user')
+        return ({ created: true, user: newUser })
+      })
+    })
   },
 
   /**
@@ -74,11 +96,11 @@ UserSchema.statics = {
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)
-      .exec();
+      .exec()
   }
-};
+}
 
 /**
  * @typedef User
  */
-export default mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema)
