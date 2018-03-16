@@ -21,6 +21,7 @@ function login(req, res, next) {
     .then((creationRes) => {
       console.log('creationRes', creationRes)
       const { user } = creationRes
+      console.log('user from creation', user)
 
       const token = generateToken(user)
       // TODO: return jwt

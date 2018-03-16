@@ -16,6 +16,8 @@ import APIError from '../server/helpers/APIError'
 import authRoute from '../server/routes/auth.route'
 import { validateToken } from '../server/helpers/auth'
 
+import sendMail from '../server/helpers/mail'
+
 const app = express()
 
 if (config.env === 'development') {
@@ -49,16 +51,22 @@ app.use(cors())
 // }
 
 // mount all routes on /api path
+app.post('/mail', (req, res, next) => {
+  sendMail()
+  // setTimeout(() => {
+  res.send('ok')
+  // }, 3000)
+})
 app.use('/auth', authRoute)
 app.use('/api', (req, res, next) => {
   console.log('will validate /api route')
   const token = req.get('access-token')
-  console.log('token', token)
   if (!token) {
     return next(new Error('No access-token header provided'))
   }
-  const validatedData = validateToken(token)
-  console.log('data', validatedData)
+  const encodedData = validateToken(token)
+  console.log('encodedData', encodedData)
+  req.encoded = encodedData // eslint-disable-line no-global-assign
   next()
 })
 app.use('/api', routes)

@@ -54,16 +54,21 @@ UserSchema.method({
  * Statics
  */
 UserSchema.statics = {
-  get(username) {
-    return this.findOne({ username })
+  get(id) {
+    console.log('get function inside UserSchema', id)
+    return this.findOne({ id })
       .exec()
       .then((user) => {
-        console.log('user', user, username)
+        console.log('user', user, id)
         if (user) {
           return user
         }
         const err = new APIError('No such user exists!', httpStatus.NOT_FOUND)
         return Promise.reject(err)
+      })
+      .catch((e) => {
+        console.error('error in get function in UserSchema', e)
+        throw e
       })
   },
 
@@ -72,7 +77,7 @@ UserSchema.statics = {
     .then((user) => {
       if (user) {
         console.log('createIfNotExist - user exist')
-        return { user, created: false }
+        return { user: user.toObject(), created: false }
       }
 
       console.log('createIfNotExist - user does not exist, wil try to create one now')
