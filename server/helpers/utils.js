@@ -1,14 +1,20 @@
+const axios = require('axios')
+
+const FACEBOOK_FIELDS = ['id', 'name', 'email']
+const getFacebookURL = accessToken => `https://graph.facebook.com/me?access_token=${accessToken}&fields=${FACEBOOK_FIELDS.slice(',')}&format=json&method=get&pretty=0&suppress_http_code=1`
+
 const validate = (data, fields) => {
-  const d = {};
+  const d = {}
   fields.forEach((f) => {
     if (data[f] === undefined) {
-      throw new Error(`Missing ${f}`);
+      throw new Error(`Missing ${f}`)
     }
 
-    d[f] = data[f];
-  });
+    d[f] = data[f]
+  })
 
-  return d;
-};
+  return d
+}
+const facebookAuth = accessToken => axios.get(getFacebookURL(accessToken))
 
-export default { validate };
+export default { validate, facebookAuth }
