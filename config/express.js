@@ -60,7 +60,8 @@ app.post("/mail", (req, res, next) => {
 app.use("/auth", authRoute);
 app.use("/api", (req, res, next) => {
   console.log("will validate /api route");
-  const token = req.get("access-token");
+  const token = req.cookies["access-token"];
+
   // NOTE: Temporary workaround
   if (req.originalUrl === "/api/auth") {
     return next();
