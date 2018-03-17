@@ -1,42 +1,42 @@
-import express from 'express'
-import logger from 'morgan'
-import bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
-import compress from 'compression'
-import methodOverride from 'method-override'
-import cors from 'cors'
-import httpStatus from 'http-status'
-import expressWinston from 'express-winston'
-import expressValidation from 'express-validation'
-import helmet from 'helmet'
-import winstonInstance from './winston'
-import routes from '../server/routes/index.route'
-import config from './config'
-import APIError from '../server/helpers/APIError'
-import authRoute from '../server/routes/auth.route'
-import { validateToken } from '../server/helpers/auth'
+import express from "express";
+import logger from "morgan";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import compress from "compression";
+import methodOverride from "method-override";
+import cors from "cors";
+import httpStatus from "http-status";
+import expressWinston from "express-winston";
+import expressValidation from "express-validation";
+import helmet from "helmet";
+import winstonInstance from "./winston";
+import routes from "../server/routes/index.route";
+import config from "./config";
+import APIError from "../server/helpers/APIError";
+import authRoute from "../server/routes/auth.route";
+import { validateToken } from "../server/helpers/auth";
 
-import sendMail from '../server/helpers/mail'
+import sendMail from "../server/helpers/mail";
 
-const app = express()
+const app = express();
 
-if (config.env === 'development') {
-  app.use(logger('dev'))
+if (config.env === "development") {
+  app.use(logger("dev"));
 }
 
 // parse body params and attache them to req.body
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cookieParser())
-app.use(compress())
-app.use(methodOverride())
+app.use(cookieParser());
+app.use(compress());
+app.use(methodOverride());
 
 // secure apps by setting various HTTP headers
-app.use(helmet())
+app.use(helmet());
 
 // enable CORS - Cross Origin Resource Sharing
-app.use(cors())
+app.use(cors());
 
 // enable detailed API logging in dev env
 // if (config.env === 'development') {
@@ -51,45 +51,52 @@ app.use(cors())
 // }
 
 // mount all routes on /api path
-app.post('/mail', (req, res, next) => {
-  sendMail()
+app.post("/mail", (req, res, next) => {
+  sendMail();
   // setTimeout(() => {
-  res.send('ok')
+  res.send("ok");
   // }, 3000)
-})
-app.use('/auth', authRoute)
-app.use('/api', (req, res, next) => {
-  console.log('will validate /api route')
-  const token = req.get('access-token')
-  if (!token) {
-    return next(new Error('No access-token header provided'))
+});
+app.use("/auth", authRoute);
+app.use("/api", (req, res, next) => {
+  console.log("will validate /api route");
+  const token = req.get("access-token");
+  // NOTE: Temporary workaround
+  if (req.originalUrl === "/api/auth") {
+    return next();
   }
-  const encodedData = validateToken(token)
-  console.log('encodedData', encodedData)
-  req.encoded = encodedData // eslint-disable-line no-global-assign
-  next()
-})
-app.use('/api', routes)
+
+  if (!token) {
+    return next(new Error("No access-token header provided"));
+  }
+  const encodedData = validateToken(token);
+  console.log("encodedData", encodedData);
+  req.encoded = encodedData; // eslint-disable-line no-global-assign
+  next();
+});
+app.use("/api", routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {
   if (err instanceof expressValidation.ValidationError) {
     // validation error contains errors which is an array of error each containing message[]
-    const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ')
-    const error = new APIError(unifiedErrorMessage, err.status, true)
-    return next(error)
+    const unifiedErrorMessage = err.errors
+      .map(error => error.messages.join(". "))
+      .join(" and ");
+    const error = new APIError(unifiedErrorMessage, err.status, true);
+    return next(error);
   } else if (!(err instanceof APIError)) {
-    const apiError = new APIError(err.message, err.status, err.isPublic)
-    return next(apiError)
+    const apiError = new APIError(err.message, err.status, err.isPublic);
+    return next(apiError);
   }
-  return next(err)
-})
+  return next(err);
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new APIError('API not found', httpStatus.NOT_FOUND)
-  return next(err)
-})
+  const err = new APIError("API not found", httpStatus.NOT_FOUND);
+  return next(err);
+});
 
 // log error in winston transports except when executing test suite
 // if (config.env !== 'test') {
@@ -99,11 +106,16 @@ app.use((req, res, next) => {
 // }
 
 // error handler, send stacktrace only during development
-app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
+app.use((
+  err,
+  req,
+  res,
+  next // eslint-disable-line no-unused-vars
+) =>
   res.status(err.status).json({
     message: err.message,
-    stack: config.env === 'development' ? err.stack : {}
+    stack: config.env === "development" ? err.stack : {}
   })
-)
+);
 
-export default app
+export default app;
