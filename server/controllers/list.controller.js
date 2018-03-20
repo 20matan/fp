@@ -77,10 +77,10 @@ function addUser(req, res, next) {
   // validates the user's data
   User.get(id)
   .then((user) => {
-    if (!user.creditCard) {
-      next(new Error('User has to place credit card to continue'))
-      return
-    }
+    // if (!user.creditCard) {
+    //   next(new Error('User has to place credit card to continue'))
+    //   return
+    // }
     // now validates the required data for the list
     if (listInReq.type === 'car' && !user.drivingLicense) {
       next(new Error('Please provide your driving license for being added to this queue'))
