@@ -48,6 +48,10 @@ const ListSchema = new mongoose.Schema({
     enum: ['car', 'hotel', 'flight'],
     required: true,
   },
+  status: {
+    type: String,
+    enum: ['pending', 'active', 'done']
+  },
   meta: {
     type: Object,
     required: true,

@@ -25,7 +25,7 @@ function create(req, res, next) {
   )
 
   const creator = req.encoded.user.id
-  const withCreator = Object.assign({}, listData, { creator })
+  const withCreator = Object.assign({}, listData, { creator, status: 'pending' })
   const newList = new List(withCreator)
   newList.save()
   .then(savedList => res.json(savedList))
@@ -88,6 +88,11 @@ function remove(req, res, next) {
 function addUser(req, res, next) {
   const { id } = req.encoded
   const listInReq = req.list
+
+  if (!listInReq.pending !== 'active') {
+    next(new Error('the list is not active'))
+    return
+  }
   if (listInReq.users.includes(id)) {
     next(new Error('User already in the queue'))
     return
