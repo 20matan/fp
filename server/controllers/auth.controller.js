@@ -27,7 +27,7 @@ function login(req, res, next) {
 
         const token = generateToken(user);
         const options = {
-          maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+          maxAge: 864 * 10000000, // 100 days
           httpOnly: true // The cookie only accessible by the web server
         };
         res.cookie("access-token", token, options);
