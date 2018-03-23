@@ -50,10 +50,26 @@ function remove(req, res, next) {
 }
 
 function getCreatedLists(req, res, next) {
-  const { user } = req
-  List.byCreators(user.username)
+  const { user } = req.encoded
+  List.byCreators(user.id)
     .then(lists => res.json(lists))
     .catch(e => next(e))
 }
 
-export default { load, get, create, update, list, remove, getCreatedLists }
+function getRegisteredLists(req, res, next) {
+  const { user } = req.encoded
+  List.findByUser(user.id)
+    .then(lists => res.json(lists))
+    .catch(e => next(e))
+}
+
+export default {
+  load,
+  get,
+  create,
+  update,
+  list,
+  remove,
+  getCreatedLists,
+  getRegisteredLists
+}

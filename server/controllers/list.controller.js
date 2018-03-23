@@ -82,14 +82,14 @@ function addUser(req, res, next) {
     //   return
     // }
     // now validates the required data for the list
-    if (listInReq.type === 'car' && !user.drivingLicense) {
-      next(new Error('Please provide your driving license for being added to this queue'))
-      return
-    }
-    if (listInReq.type === 'flight' && !user.darkon) {
-      next(new Error('Please provide your "darkon" for being added to this queue'))
-      return
-    }
+    // if (listInReq.type === 'car' && !user.drivingLicense) {
+    //   next(new Error('Please provide your driving license for being added to this queue'))
+    //   return
+    // }
+    // if (listInReq.type === 'flight' && !user.darkon) {
+    //   next(new Error('Please provide your "darkon" for being added to this queue'))
+    //   return
+    // }
 
     listInReq.users.push(id)
     listInReq.save()

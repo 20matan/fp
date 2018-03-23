@@ -22,6 +22,8 @@ router.route('/:username')
 
 router.get('/:username/createdLists', userCtrl.getCreatedLists)
 
+router.get('/me/lists', userCtrl.getRegisteredLists)
+
 // /** Load user when API with userId route parameter is hit */
 // router.param('username', userCtrl.load)
 

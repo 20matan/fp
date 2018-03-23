@@ -137,6 +137,9 @@ ListSchema.statics = {
     })
     .catch(e => Promise.reject(e))
   },
+  findByUser(userId) {
+    return this.find({ users: userId })
+  }
 }
 
 export default mongoose.model('List', ListSchema)
