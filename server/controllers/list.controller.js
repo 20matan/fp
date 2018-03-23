@@ -17,7 +17,7 @@ function get(req, res) {
 
 function create(req, res, next) {
   const listData = validate(req.body,
-    ['title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta']
+    ['title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta', 'location']
   )
   const creator = req.encoded.id
   const withCreator = Object.assign({}, listData, { creator })
