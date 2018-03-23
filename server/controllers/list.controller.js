@@ -2,9 +2,11 @@ import List from '../models/list.model'
 import User from '../models/user.model'
 import { validate } from '../helpers/utils'
 
+
 function load(req, res, next, id) {
   List.get(id)
     .then((listFromDB) => {
+      console.log('got list from db')
       req.list = listFromDB // eslint-disable-line no-param-reassign
       return next()
     })
@@ -15,13 +17,15 @@ function get(req, res) {
   return res.json(req.list)
 }
 
+
 function create(req, res, next) {
+  console.log('create function')
   const listData = validate(req.body,
     ['title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta', 'location']
   )
-  const creator = req.encoded.id
+
+  const creator = req.encoded.user.id
   const withCreator = Object.assign({}, listData, { creator })
-  console.log('creator', creator)
   const newList = new List(withCreator)
   newList.save()
   .then(savedList => res.json(savedList))
@@ -31,18 +35,33 @@ function create(req, res, next) {
   })
 }
 
+
 // TODO: make sure you're the list creator / superadmin
 function update(req, res, next) {
+  console.log('on update list.controller')
   const reqList = req.list
+  console.log('got the list from req')
 
   if (reqList.users && reqList.users.length > 0) {
+    console.error('something with users')
     next(new Error('Cant edit the queue, there are people in it'))
     return
   }
 
-  reqList.save(req.body)
-    .then(savedList => res.json(savedList))
-    .catch(e => next(e))
+  console.log('gonna save the list')
+  Object.keys(req.body).forEach((k) => {
+    reqList[k] = req.body[k]
+  })
+  // reqList = Object.assign({}, reqList, { title: `${Date.now}a` })
+  reqList.save()
+    .then((savedList) => {
+      console.log('in the then of savedList', savedList)
+      return res.json(savedList)
+    })
+    .catch((e) => {
+      console.error('e,', e)
+      next(e)
+    })
 }
 
 function list(req, res, next) {

@@ -57,7 +57,7 @@ UserSchema.statics = {
   get(id) {
     console.log('get function inside UserSchema', id)
     return this.findOne({ id })
-      .exec()
+      // .exec()
       .then((user) => {
         console.log('user', user, id)
         if (user) {
@@ -101,7 +101,7 @@ UserSchema.statics = {
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)
-      .exec()
+      // .exec()
   }
 }
 

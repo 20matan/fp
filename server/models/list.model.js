@@ -59,6 +59,9 @@ const ListSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  hidden: {
+    type: String
+  }
 })
 //
 // /**
@@ -77,6 +80,20 @@ ListSchema.methods = {
     this.save()
   }
 }
+
+
+const generateHiddenField = (obj) => {
+  const { title, description, price, type, location } = obj
+  return `${title} - ${description}, ${type} in ${location}`
+}
+
+ListSchema.pre('save', function (next) {
+  console.log('pre save of list')
+  this.hidden = generateHiddenField(this)
+  console.log('this hidden')
+  next()
+})
+
 
 /**
  * Statics
@@ -99,7 +116,7 @@ ListSchema.statics = {
         console.log('list', id, listFromDB)
         if (listFromDB) {
           console.log('RETURN LIST')
-          return Promise.resolve(listFromDB)
+          return listFromDB
         }
         console.log('err')
         const err = new APIError('No such list exists!', httpStatus.NOT_FOUND)
@@ -107,6 +124,7 @@ ListSchema.statics = {
       })
   },
   list(query) {
+    console.log('query', query)
     const { skip = 0, limit = 50 } = query
     const queryFilter = query
     delete queryFilter.skip
@@ -115,19 +133,22 @@ ListSchema.statics = {
     _.each(queryFilter, (val, key) => {
       if (Number.isInteger(Number.parseInt(val, 10))) {
         likeQuery[key] = val
-      } else {
+      } else if (key !== 'freesearch') {
         likeQuery[key] = like(val)
+      } else {
+        likeQuery.$text = { $search: val }
       }
     })
+    console.log('likeQuery', likeQuery)
     return this.find(likeQuery)
       .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit)
-      .exec()
+      // .exec()
   },
   byCreators(userId) {
     return this.find({ creator: userId })
-    .exec()
+    // .exec()
     .then((lists) => {
       if (lists) {
         return lists
@@ -141,5 +162,5 @@ ListSchema.statics = {
     return this.find({ users: userId })
   }
 }
-
+ListSchema.index({ hidden: 'text' })
 export default mongoose.model('List', ListSchema)
