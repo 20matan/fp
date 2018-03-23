@@ -5,6 +5,7 @@ import httpStatus from 'http-status'
 import APIError from '../helpers/APIError'
 
 const like = param => new RegExp(param, 'i')
+const FREE_SEARCH_COLUMNS = ['title', 'location', 'description', 'price', 'type']
 
 /**
  * List Schema
@@ -27,7 +28,7 @@ const ListSchema = new mongoose.Schema({
     required: true,
   },
   price: {
-    type: Number,
+    type: String,
     required: true
   },
   startDate: {
@@ -130,16 +131,27 @@ ListSchema.statics = {
     delete queryFilter.skip
     delete queryFilter.limit
     const likeQuery = {}
-    _.each(queryFilter, (val, key) => {
-      if (Number.isInteger(Number.parseInt(val, 10))) {
-        likeQuery[key] = val
-      } else if (key !== 'freesearch') {
-        likeQuery[key] = like(val)
-      } else {
-        likeQuery.$text = { $search: val }
-      }
-    })
-    console.log('likeQuery', likeQuery)
+    if (queryFilter.freesearch) {
+      console.log('free search')
+
+      likeQuery.$and = []
+      queryFilter.freesearch.split(',').forEach((cond) => {
+        const condRegex = new RegExp(cond)
+        const columnsOrs = FREE_SEARCH_COLUMNS.map(col => ({ [col]: condRegex }))
+        likeQuery.$and.push({ $or: columnsOrs })
+      })
+      console.log('queryFilter', likeQuery)
+    } else {
+      _.each(queryFilter, (val, key) => {
+        if (Number.isInteger(Number.parseInt(val, 10))) {
+          likeQuery[key] = val
+        } else {
+          likeQuery[key] = like(val)
+        }
+      })
+    }
+
+    console.log('likeQuery', JSON.stringify(likeQuery))
     return this.find(likeQuery)
       .sort({ createdAt: -1 })
       .skip(+skip)
