@@ -1,28 +1,20 @@
 import express from 'express'
-import userCtrl from '../controllers/user.controller'
+import * as userCtrl from '../controllers/user.controller'
 
 const router = express.Router() // eslint-disable-line new-cap
 
-router.route('/')
-  /** GET /api/users - Get list of users */
-  .get(userCtrl.list)
+// router.route('/')
+//   .get(userCtrl.list)
+//   .post(userCtrl.create)
 
-  /** POST /api/users - Create new user */
-  .post(userCtrl.create)
-
-router.route('/:username')
-  /** GET /api/users/:userId - Get user */
-  .get(userCtrl.get)
-
-  /** PUT /api/users/:userId - Update user */
-  .put(userCtrl.update)
-
-  /** DELETE /api/users/:userId - Delete user */
-  .delete(userCtrl.remove)
+// router.route('/:username')
+//   .get(userCtrl.get)
+//   .put(userCtrl.update)
+//   .delete(userCtrl.remove)
 
 router.get('/me/createdLists', userCtrl.getCreatedLists)
-
 router.get('/me/lists', userCtrl.getRegisteredLists)
+router.get('/profile/:id', userCtrl.findById)
 
 // /** Load user when API with userId route parameter is hit */
 // router.param('username', userCtrl.load)
