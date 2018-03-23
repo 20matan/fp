@@ -20,7 +20,7 @@ router.route('/:username')
   /** DELETE /api/users/:userId - Delete user */
   .delete(userCtrl.remove)
 
-router.get('/:username/createdLists', userCtrl.getCreatedLists)
+router.get('/me/createdLists', userCtrl.getCreatedLists)
 
 router.get('/me/lists', userCtrl.getRegisteredLists)
 
