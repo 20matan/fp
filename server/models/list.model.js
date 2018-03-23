@@ -133,10 +133,12 @@ ListSchema.statics = {
     const likeQuery = {}
     if (queryFilter.freesearch) {
       console.log('free search')
+      const freeSearch = queryFilter.freesearch.replace(/ /g, '')
 
       likeQuery.$and = []
-      queryFilter.freesearch.split(',').forEach((cond) => {
+      freeSearch.split(',').forEach((cond) => {
         const condRegex = new RegExp(cond)
+        console.log('condRegex', condRegex)
         const columnsOrs = FREE_SEARCH_COLUMNS.map(col => ({ [col]: condRegex }))
         likeQuery.$and.push({ $or: columnsOrs })
       })
