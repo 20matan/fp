@@ -1,8 +1,36 @@
 import User from '../models/user.model'
 import { facebookAuth } from '../helpers/utils'
 import { generateToken } from '../helpers/auth'
+import config from '../../config/config'
 
-function login(req, res, next) {
+const COOKIE_OPTIONS = {
+  maxAge: 864 * 10000000, // 100 days
+  httpOnly: true // The cookie only accessible by the web server
+}
+
+export const adminLogin = (req, res, next) => {
+  console.log('adminLogin function')
+
+  const { username, password } = req.body
+  if (!username) {
+    return next(new Error('please enter username'))
+  }
+  if (!password) {
+    return next(new Error('please enter password'))
+  }
+
+  if (username !== config.admin.username || password !== config.admin.password) {
+    console.error('wrong credentials')
+    return next(new Error('Wrong credentials'))
+  }
+
+  console.log('good credentials')
+  const data = Object.assign({}, { admin: true }, config.admin)
+  const token = generateToken(data)
+  res.cookie('access-token', token, COOKIE_OPTIONS)
+  res.send({ succcess: true, token })
+}
+export const login = (req, res, next) => {
   if (!req.body.access_token) {
     next(new Error('No access_token was sent in the body'))
     return
@@ -26,17 +54,10 @@ function login(req, res, next) {
         console.log('user from creation', user)
 
         const token = generateToken(user)
-        const options = {
-          maxAge: 864 * 10000000, // 100 days
-          httpOnly: true // The cookie only accessible by the web server
-        }
-        res.cookie('access-token', token, options)
-        // TODO: return jwt
+        res.cookie('access-token', token, COOKIE_OPTIONS)
         res.send({ succcess: true, token, user })
         return
       })
     })
     .catch(next)
 }
-
-export default { login }
