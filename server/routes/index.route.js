@@ -1,17 +1,17 @@
-import express from "express";
-import userRoutes from "./user.route";
-import listRoutes from "./list.route";
-import authRoutes from "./auth.route";
+import express from 'express'
+import userRoutes from './user.route'
+import listRoutes from './list.route'
+import authRoutes from './auth.route'
 
-const router = express.Router(); // eslint-disable-line new-cap
+const router = express.Router() // eslint-disable-line new-cap
 
-router.get("/test", (req, res) => res.send("OK"));
+router.get('/test', (req, res) => res.send('OK'))
 
 // mount user routes at /users
-router.use("/user", userRoutes);
-router.use("/list", listRoutes);
+router.use('/user', userRoutes)
+router.use('/list', listRoutes)
 
 // mount auth routes at /auth
-router.use("/auth", authRoutes);
+router.use('/auth', authRoutes)
 
-export default router;
+export default router
