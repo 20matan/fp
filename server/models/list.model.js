@@ -181,6 +181,9 @@ ListSchema.statics = {
   },
   findByUser(userId) {
     return this.find({ users: userId })
+  },
+  findByWinner(userId) {
+    return this.find({ winner: userId })
   }
 }
 ListSchema.index({ hidden: 'text' })

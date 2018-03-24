@@ -69,6 +69,13 @@ export const getRegisteredLists = (req, res, next) => {
     .catch(e => next(e))
 }
 
+export const getWonLists = (req, res, next) => {
+  const { user } = req.encoded
+  List.findByWinner(user.id)
+    .then(lists => res.json(lists))
+    .catch(e => next(e))
+}
+
 // export default {
 //   load,
 //   get,

@@ -14,6 +14,7 @@ const router = express.Router() // eslint-disable-line new-cap
 
 router.get('/me/createdLists', userCtrl.getCreatedLists)
 router.get('/me/lists', userCtrl.getRegisteredLists)
+router.get('/me/wins', userCtrl.getWonLists)
 router.get('/profile/:id', userCtrl.findById)
 
 // /** Load user when API with userId route parameter is hit */
