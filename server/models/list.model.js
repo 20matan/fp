@@ -50,7 +50,7 @@ const ListSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'active', 'done']
+    enum: ['pending', 'active', 'done', 'deny']
   },
   meta: {
     type: Object,
@@ -59,6 +59,9 @@ const ListSchema = new mongoose.Schema({
   users: {
     type: Array,
     default: []
+  },
+  winner: { // User.id
+    type: String,
   },
   createdAt: {
     type: Date,

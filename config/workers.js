@@ -22,7 +22,7 @@ const finishList = (list) => {
     sendEmail(userEmail)
     .then(() => {
       console.log('sent winning email to ', userEmail)
-      list.finished = true
+      list.status = 'done'
       list.save()
     })
     .catch((e) => {

@@ -67,7 +67,7 @@ function update(req, res, next) {
 function list(req, res, next) {
   const { limit = 50, skip = 0 } = req.query
   // const query = {a: req.query}
-  const query = Object.assign({}, req.query, { limit, skip })
+  const query = Object.assign({}, req.query, { limit, skip, status: 'active' })
   console.log('query', query)
   List.list(query)
     .then(lists => res.json(lists))

@@ -15,20 +15,64 @@ export const getAllLists = (req, res, next) => {
 
 export const acceptList = (req, res, next) => {
   console.log('accept list')
-  const { listId } = req.body
-  List.findOne({ _id: listId })
+  const { id } = req.params
+  List.get(id)
   .then((list) => {
-    if (!list) {
-      return next(new Error('list was not found'))
-    }
     list.status = 'active'
     return list.save()
   })
   .then(() => {
     res.send({ success: true })
   })
+  .catch(e => next(e))
+}
+
+export const denyList = (req, res, next) => {
+  console.log('accept list')
+  const { id } = req.params
+  List.get(id)
+  .then((list) => {
+    list.status = 'deny'
+    return list.save()
+  })
+  .then(() => {
+    res.send({ success: true })
+  })
+  .catch(e => next(e))
+}
+
+// TODO: make sure you're the list creator / superadmin
+export const updateList = (req, res, next) => {
+  console.log('on updateList on admin controller')
+  const { id } = req.params
+  List.get(id)
+  .then((list) => {
+    console.log('got the list from req')
+
+    Object.keys(req.body).forEach((k) => {
+      list[k] = req.body[k]
+    })
+    return list.save()
+  })
+  .then(() => res.send({ success: true }))
   .catch((e) => {
-    console.error('error', e)
-    res.send({ success: false, error: e })
+    console.error('e,', e)
+    next(e)
+  })
+}
+
+export const deleteList = (req, res, next) => {
+  console.log('on deleteList on admin controller')
+  const { id } = req.params
+  List.get(id)
+  .then((list) => {
+    console.log('got the list from req')
+
+    return list.remove()
+  })
+  .then(() => res.send({ success: true }))
+  .catch((e) => {
+    console.error('e,', e)
+    next(e)
   })
 }

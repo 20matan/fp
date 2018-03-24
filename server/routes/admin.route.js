@@ -5,5 +5,8 @@ const router = express.Router() // eslint-disable-line new-cap
 
 router.get('/user/all', adminController.getAllUsers)
 router.get('/list/all', adminController.getAllLists)
-router.post('/list/accept', adminController.acceptList)
+router.post('/list/:id/accept', adminController.acceptList)
+router.post('/list/:id/deny', adminController.denyList)
+router.put('/list/:id', adminController.updateList)
+router.delete('/list/:id', adminController.deleteList)
 export default router
