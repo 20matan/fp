@@ -68,7 +68,7 @@ UserSchema.statics = {
   get(id) {
     console.log("get function inside UserSchema", id);
     return (
-      this.findOne({ id })
+      this.findById(id)
         // .exec()
         .then(user => {
           console.log("user", user, id);
