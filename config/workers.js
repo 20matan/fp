@@ -23,6 +23,7 @@ const finishList = (list) => {
     .then(() => {
       console.log('sent winning email to ', userEmail)
       list.status = 'done'
+      list.winner = user.id
       list.save()
     })
     .catch((e) => {
