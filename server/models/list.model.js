@@ -12,7 +12,7 @@ const FREE_SEARCH_COLUMNS = ['title', 'location', 'description', 'price', 'type'
  */
 const ListSchema = new mongoose.Schema({
   creator: { // user if (facebooj id)
-    type: String,
+    type: mongoose.Schema.ObjectId,
     required: true,
   },
   title: {
