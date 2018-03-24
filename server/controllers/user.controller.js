@@ -2,16 +2,16 @@ import User from '../models/user.model'
 import List from '../models/list.model'
 import { validate } from '../helpers/utils'
 
-export const load = (req, res, next, username) => {
-  User.get(username)
-    .then((user) => {
-      req.user = user // eslint-disable-line no-param-reassign
-      return next()
-    })
-    .catch(e => next(e))
-}
+// export const load = (req, res, next, username) => {
+//   User.get(username)
+//     .then((user) => {
+//       req.user = user // eslint-disable-line no-param-reassign
+//       return next()
+//     })
+//     .catch(e => next(e))
+// }
 
-export const get = (req, res) => res.json(req.user)
+// export const get = (req, res) => res.json(req.user)
 
 export const findById = (req, res, next) => {
   const { id } = req.params
@@ -31,14 +31,14 @@ export const create = (req, res, next) => {
     .catch(e => next(e))
 }
 
-export const update = (req, res, next) => {
-  const { user } = req
-
-  user
-    .save(req.body)
-    .then(savedUser => res.json(savedUser))
-    .catch(e => next(e))
-}
+// export const update = (req, res, next) => {
+//   const { user } = req
+//
+//   user
+//     .save(req.body)
+//     .then(savedUser => res.json(savedUser))
+//     .catch(e => next(e))
+// }
 
 export const list = (req, res, next) => {
   const { limit = 50, skip = 0 } = req.query

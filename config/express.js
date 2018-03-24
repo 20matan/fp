@@ -75,6 +75,11 @@ app.use('/api', (req, res, next) => {
   req.encoded = { user: encodedData } // eslint-disable-line no-global-assign
   next()
 })
+app.use('/api/admin', (req, res, next) => {
+  console.log('will validate /api/admin route')
+  if (!req.encoded.user.admin) { return next(new Error('You are not admin!')) }
+  next()
+})
 app.use('/api', routes)
 
 // if error is not an instanceOf APIError, convert it.
