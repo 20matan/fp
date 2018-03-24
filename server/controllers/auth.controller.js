@@ -3,6 +3,7 @@ import { facebookAuth } from '../helpers/utils'
 import { generateToken } from '../helpers/auth'
 import config from '../../config/config'
 
+const FACEBOOK_ADMINS_ID = ['10200352632296071', '10215761152011739']
 const COOKIE_OPTIONS = {
   maxAge: 864 * 10000000, // 100 days
   httpOnly: true // The cookie only accessible by the web server
@@ -30,34 +31,44 @@ export const adminLogin = (req, res, next) => {
   res.cookie('access-token', token, COOKIE_OPTIONS)
   res.send({ succcess: true, token })
 }
+
+
 export const login = (req, res, next) => {
   if (!req.body.access_token) {
     next(new Error('No access_token was sent in the body'))
     return
   }
-
   facebookAuth(req.body.access_token)
     .then(({ data }) => {
       console.log('res', data)
       if (data.error) {
-        next(data.error)
+        // next(data.error)
+        res.send({ success: false, error: data.error })
         return
       }
       console.log('no error in facebook auth, moving on')
 
-      User.findOrCreate(
+      return User.findOrCreate(
         data.id,
         Object.assign({}, data, { username: data.name })
       ).then((creationRes) => {
-        console.log('creationRes', creationRes)
         const { user } = creationRes
-        console.log('user from creation', user)
+        const dataToTokenize = Object.assign({}, user)
 
-        const token = generateToken(user)
+        console.log('id', data.id)
+        if (FACEBOOK_ADMINS_ID.indexOf(data.id) !== -1) {
+          console.log('admin log in')
+          dataToTokenize.admin = true
+        }
+
+        const token = generateToken(dataToTokenize)
         res.cookie('access-token', token, COOKIE_OPTIONS)
         res.send({ succcess: true, token, user })
         return
       })
     })
-    .catch(next)
+    .catch((e) => {
+      console.error('e', e)
+      next(e)
+    })
 }
