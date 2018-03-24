@@ -47,13 +47,12 @@ export const login = (req, res, next) => {
         return
       }
       console.log('no error in facebook auth, moving on')
-
-      return User.findOrCreate(
-        data.id,
-        Object.assign({}, data, { username: data.name })
-      ).then((creationRes) => {
+      const userData = Object.assign({}, data, { username: data.name, picture_url: data.picture.data.url })
+      console.log('userData', userData)
+      return User.findOrCreate(data.id, userData)
+      .then((creationRes) => {
         const { user } = creationRes
-        const dataToTokenize = Object.assign({}, user)
+        const dataToTokenize = Object.assign({}, user.toObject())
 
         console.log('id', data.id)
         if (FACEBOOK_ADMINS_ID.indexOf(data.id) !== -1) {
