@@ -11,11 +11,11 @@ const router = express.Router() // eslint-disable-line new-cap
 //   .get(userCtrl.get)
 //   .put(userCtrl.update)
 //   .delete(userCtrl.remove)
-
-router.get('/me/createdLists', userCtrl.getCreatedLists)
-router.get('/me/lists', userCtrl.getRegisteredLists)
-router.get('/me/wins', userCtrl.getWonLists)
-router.get('/profile/:id', userCtrl.findById)
+router.get('/:id', userCtrl.findById)
+router.put('/:id', userCtrl.update)
+router.get('/:id/createdLists', userCtrl.getCreatedLists)
+router.get('/:id/lists', userCtrl.getRegisteredLists)
+router.get('/:id/wins', userCtrl.getWonLists)
 
 // /** Load user when API with userId route parameter is hit */
 // router.param('username', userCtrl.load)

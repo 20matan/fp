@@ -31,14 +31,19 @@ export const create = (req, res, next) => {
     .catch(e => next(e))
 }
 
-// export const update = (req, res, next) => {
-//   const { user } = req
-//
-//   user
-//     .save(req.body)
-//     .then(savedUser => res.json(savedUser))
-//     .catch(e => next(e))
-// }
+export const update = (req, res, next) => {
+  const { id } = req.params
+
+  User.get(id)
+  .then((user) => {
+    Object.keys(req.body).forEach((k) => {
+      user[k] = req.body[k]
+    })
+    return user.save()
+  })
+  .then(user => res.send({ success: true, user }))
+  .catch(e => next(e))
+}
 
 export const list = (req, res, next) => {
   const { limit = 50, skip = 0 } = req.query
@@ -56,33 +61,23 @@ export const remove = (req, res, next) => {
 }
 
 export const getCreatedLists = (req, res, next) => {
-  const { user } = req.encoded
-  List.byCreators(user.id)
+  // const { user } = req.encoded
+  const { id } = req.params
+  List.byCreators(id)
     .then(lists => res.json(lists))
     .catch(e => next(e))
 }
 
 export const getRegisteredLists = (req, res, next) => {
-  const { user } = req.encoded
-  List.findByUser(user.id)
+  const { id } = req.params
+  List.findByUser(id)
     .then(lists => res.json(lists))
     .catch(e => next(e))
 }
 
 export const getWonLists = (req, res, next) => {
-  const { user } = req.encoded
-  List.findByWinner(user.id)
+  const { id } = req.params
+  List.findByWinner(id)
     .then(lists => res.json(lists))
     .catch(e => next(e))
 }
-
-// export default {
-//   load,
-//   get,
-//   create,
-//   update,
-//   list,
-//   remove,
-//   getCreatedLists,
-//   getRegisteredLists
-// }

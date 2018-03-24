@@ -24,7 +24,7 @@ function create(req, res, next) {
     ['title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta', 'location']
   )
 
-  const creator = req.encoded.user.id
+  const creator = req.encoded.user._id
   const withCreator = Object.assign({}, listData, { creator, status: 'pending' })
   const newList = new List(withCreator)
   newList.save()
@@ -86,20 +86,20 @@ function remove(req, res, next) {
 }
 
 function addUser(req, res, next) {
-  const { id } = req.encoded
+  const { _id } = req.encoded
   const listInReq = req.list
 
   if (!listInReq.pending !== 'active') {
     next(new Error('the list is not active'))
     return
   }
-  if (listInReq.users.includes(id)) {
+  if (listInReq.users.includes(_id)) {
     next(new Error('User already in the queue'))
     return
   }
 
   // validates the user's data
-  User.get(id)
+  User.get(_id)
   .then((user) => {
     // if (!user.creditCard) {
     //   next(new Error('User has to place credit card to continue'))
@@ -115,7 +115,7 @@ function addUser(req, res, next) {
     //   return
     // }
 
-    listInReq.users.push(id)
+    listInReq.users.push(_id)
     listInReq.save()
     .then(savedList => res.json(savedList))
     .catch(e => next(e))
