@@ -89,7 +89,7 @@ export const addComment = (req, res, next) => {
 
   User.get(userId)
   .then((user) => {
-    user.comments.push({ userId: `${commentorId}-commentor`, content })
+    user.comments.push({ userId: commentorId, content })
     return user.save()
   })
   .then(() => res.send({ success: true }))
