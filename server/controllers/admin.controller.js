@@ -13,6 +13,12 @@ export const getAllLists = (req, res, next) => {
   .catch(e => next(e))
 }
 
+export const getPendingLists = (req, res, next) => {
+  List.find({ status: 'pending' })
+  .then(lists => res.json(lists))
+  .catch(e => next(e))
+}
+
 export const acceptList = (req, res, next) => {
   console.log('accept list')
   const { id } = req.params
