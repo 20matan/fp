@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
     required: true
   },
   comments: {
-    type: Array, // {userId, content}
+    type: Array, // {userId, content, rating}
   },
   mobileNumber: {
     type: String
@@ -53,6 +53,10 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  usePushEach: true
+  // was getting an error caused by different mongo versions. 
+  // This tells the mongo to use push instead of pushAll which doesn't exist in certain versions
 })
 
 /**
