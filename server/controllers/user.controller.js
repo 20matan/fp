@@ -94,6 +94,10 @@ export const addComment = (req, res, next) => {
 
   // TODO: get commentor user object and include picUrl and username in the comment below
 
+  if (!content) {
+    return next(new Error('content cannot be empty'))
+  }
+
   User.get(userId)
   .then((user) => {
     user.comments.push({
