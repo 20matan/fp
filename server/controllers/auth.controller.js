@@ -3,7 +3,7 @@ import { facebookAuth } from '../helpers/utils'
 import { generateToken } from '../helpers/auth'
 import config from '../../config/config'
 
-const FACEBOOK_ADMINS_ID = ['10200352632296071', '10215761152011739']
+const FACEBOOK_ADMINS_ID = ['10200352632296071', '10215761152011739', '1782689235075417']
 const COOKIE_OPTIONS = {
   maxAge: 864 * 10000000, // 100 days
   httpOnly: true // The cookie only accessible by the web server
