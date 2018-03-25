@@ -77,8 +77,12 @@ export const getRegisteredLists = (req, res, next) => {
 
 export const getWonLists = (req, res, next) => {
   const { id } = req.params
+  console.log('id', id)
   List.findByWinner(id)
-    .then(lists => res.json(lists))
+    .then((lists) => {
+      console.log('lists as response', lists)
+      return res.json(lists)
+    })
     .catch(e => next(e))
 }
 

@@ -184,6 +184,7 @@ ListSchema.statics = {
     return this.find({ users: userId })
   },
   findByWinner(userId) {
+    console.log('findByWinner', userId)
     return this.find({ winners: userId })
   }
 }
