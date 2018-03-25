@@ -16,6 +16,7 @@ router.put('/:id', userCtrl.update)
 router.get('/:id/createdLists', userCtrl.getCreatedLists)
 router.get('/:id/lists', userCtrl.getRegisteredLists)
 router.get('/:id/wins', userCtrl.getWonLists)
+router.post('/:id/comment', userCtrl.addComment)
 
 // /** Load user when API with userId route parameter is hit */
 // router.param('username', userCtrl.load)

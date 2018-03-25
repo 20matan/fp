@@ -22,6 +22,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  comments: {
+    type: Array, // {userId, content}
+  },
   mobileNumber: {
     type: String
   },

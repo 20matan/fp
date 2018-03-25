@@ -81,3 +81,17 @@ export const getWonLists = (req, res, next) => {
     .then(lists => res.json(lists))
     .catch(e => next(e))
 }
+
+export const addComment = (req, res, next) => {
+  const commentorId = req.encoded.user._id
+  const { content } = req.body
+  const userId = req.params.id
+
+  User.get(userId)
+  .then((user) => {
+    user.comments.push({ userId: commentorId, content })
+    return user.save()
+  })
+  .then(() => res.send({ success: true }))
+  .catch(e => next(e))
+}
