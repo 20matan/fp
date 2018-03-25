@@ -85,7 +85,10 @@ export const getWonLists = (req, res, next) => {
 export const addComment = (req, res, next) => {
   const commentorId = req.encoded.user._id
   const { content, rating } = req.body
+
   const userId = req.params.id
+
+  // TODO: get commentor user object and include picUrl and username in the comment below
 
   User.get(userId)
   .then((user) => {
