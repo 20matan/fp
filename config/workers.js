@@ -7,34 +7,30 @@ const finishList = (list) => {
   const { users } = list
   console.log('finishList, list id = ', list.id, 'users = ', users)
   if (!users || users.length === 0) {
-    list.finished = true
+    list.status = 'done'
     list.save()
     return
   }
 
-  const winnerFacebookId = users[0]
-  console.log('winner winnerFacebookId', winnerFacebookId)
-  User.get(winnerFacebookId)
-  .then((user) => {
-    const userEmail = user.email
-    console.log('user email', userEmail)
-
-    sendEmail(userEmail)
-    .then(() => {
-      console.log('sent winning email to ', userEmail)
-      list.status = 'done'
-      list.winner = user.id
-      list.save()
-    })
-    .catch((e) => {
-      console.error('error in sending an email for list id = ', list.id, 'user email = ', userEmail, e)
+  const winnerIds = users.slice(0, list.amount)
+  list.winners = winnerIds
+  list.status = 'done'
+  list.save()
+  .then(() => {
+    const winnerIdsPromises = winnerIds.map(id => User.get(id))
+    Promise.all(winnerIdsPromises)
+    .then((usersFromPromise) => {
+      // console.log('users', usersFromPromise)
+      const emails = usersFromPromise.map(u => u.email)
+      console.log('emails', emails)
+      emails.map(sendEmail)
     })
   })
 }
 const fetchAllLists = () => {
   List.getPassedButNonFinished()
   .then((lists) => {
-    console.log('sendEmailsForWinners.List.getPassedButNonFinished lists = ', lists)
+    console.log('sendEmailsForWinners.List.getPassedButNonFinished lists.length ', lists.length)
     lists.forEach(finishList)
   })
 }

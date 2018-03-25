@@ -21,7 +21,7 @@ function get(req, res) {
 function create(req, res, next) {
   console.log('create function')
   const listData = validate(req.body,
-    ['title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta', 'location']
+    ['title', 'description', 'price', 'startDate', 'endDate', 'type', 'meta', 'location', 'amount']
   )
 
   const creator = req.encoded.user._id

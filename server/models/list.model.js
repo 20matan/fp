@@ -27,6 +27,10 @@ const ListSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  amount: { // how many people can win?
+    type: Number,
+    required: true,
+  },
   price: {
     type: String,
     required: true
@@ -38,10 +42,6 @@ const ListSchema = new mongoose.Schema({
   endDate: {
     type: Date,
     required: true,
-  },
-  finished: {
-    type: Boolean,
-    default: false
   },
   type: {
     type: String,
@@ -60,8 +60,9 @@ const ListSchema = new mongoose.Schema({
     type: Array,
     default: []
   },
-  winner: { // User.id
-    type: String,
+  winners: { // User.id
+    type: Array,
+    default: [],
   },
   createdAt: {
     type: Date,
@@ -114,7 +115,7 @@ ListSchema.statics = {
       endDate: {
         $lt: Date.now()
       },
-      finished: false
+      status: 'active'
     })
   },
   get(id) {
@@ -183,7 +184,7 @@ ListSchema.statics = {
     return this.find({ users: userId })
   },
   findByWinner(userId) {
-    return this.find({ winner: userId })
+    return this.find({ winners: userId })
   }
 }
 ListSchema.index({ hidden: 'text' })

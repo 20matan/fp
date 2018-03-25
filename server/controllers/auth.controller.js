@@ -48,7 +48,7 @@ export const login = (req, res, next) => {
       }
       console.log('no error in facebook auth, moving on')
       const userData = Object.assign({}, data, { username: data.name, picture_url: data.picture.data.url })
-      console.log('userData', userData)
+      // console.log('userData', userData)
       return User.findOrCreate(data.id, userData)
       .then((creationRes) => {
         const { user } = creationRes
