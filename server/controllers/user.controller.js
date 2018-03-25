@@ -84,12 +84,12 @@ export const getWonLists = (req, res, next) => {
 
 export const addComment = (req, res, next) => {
   const commentorId = req.encoded.user._id
-  const { content } = req.body
+  const { content, rating } = req.body
   const userId = req.params.id
 
   User.get(userId)
   .then((user) => {
-    user.comments.push({ userId: commentorId, content })
+    user.comments.push({ userId: commentorId, content, rating })
     return user.save()
   })
   .then(() => res.send({ success: true }))
