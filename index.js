@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import util from 'util'
+// import './scripts/fill-db'
 
 // config should be imported before importing any other file
 import config from './config/config'
