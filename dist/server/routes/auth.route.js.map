@@ -1,0 +1,1 @@
+{"version":3,"sources":["server/routes/auth.route.js"],"names":["authCtrl","router","Router","post","login"],"mappings":";;;;;;AAAA;;;;AACA;;IAAYA,Q;;;;;;AAEZ,IAAMC,SAAS,kBAAQC,MAAR,EAAf,C,CAAgC;;AAEhCD,OAAOE,IAAP,CAAY,GAAZ,EAAiBH,SAASI,KAA1B;AACA;;kBAEeH,M","file":"auth.route.js","sourceRoot":"../../../../.."}
