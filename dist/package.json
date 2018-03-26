@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "gulp serve",
+    "postinstall": "bower install && grunt build",
     "start": "cd ./dist/ && node index.js",
     "start:debug": "cross-env DEBUG=express-mongoose-es6-rest-api:* yarn start",
     "build": "gulp",
