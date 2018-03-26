@@ -52,7 +52,8 @@ export const login = (req, res, next) => {
       return User.findOrCreate(data.id, userData)
       .then((creationRes) => {
         const { user } = creationRes
-        const dataToTokenize = Object.assign({}, user)
+        const userData = user.toObject ? user.toObject() : user
+        const dataToTokenize = Object.assign({}, userData)
 
         console.log('id', data.id)
         if (FACEBOOK_ADMINS_ID.indexOf(data.id) !== -1) {

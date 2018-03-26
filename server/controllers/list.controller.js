@@ -86,10 +86,12 @@ function remove(req, res, next) {
 }
 
 function addUser(req, res, next) {
-  const { _id } = req.encoded
+  const { _id } = req.encoded.user
   const listInReq = req.list
 
-  if (!listInReq.pending !== 'active') {
+  console.log('id', _id)
+
+  if (listInReq.status !== 'active') {
     next(new Error('the list is not active'))
     return
   }
@@ -99,8 +101,9 @@ function addUser(req, res, next) {
   }
 
   // validates the user's data
-  User.get(_id)
+  return User.get(_id)
   .then((user) => {
+    console.log('found the user', _id)
     // if (!user.creditCard) {
     //   next(new Error('User has to place credit card to continue'))
     //   return
@@ -116,10 +119,10 @@ function addUser(req, res, next) {
     // }
 
     listInReq.users.push(_id)
-    listInReq.save()
+    return listInReq.save()
     .then(savedList => res.json(savedList))
-    .catch(e => next(e))
   })
+  .catch(e => next(e))
 }
 
 function removeUser(req, res, next) {
@@ -130,7 +133,7 @@ function removeUser(req, res, next) {
     return
   }
   listInReq.users.pull(id)
-  listInReq.save()
+  return listInReq.save()
   .then(savedList => res.json(savedList))
   .catch(e => next(e))
 }

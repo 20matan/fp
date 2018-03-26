@@ -65,7 +65,9 @@ const generateListAndCreators = () => {
       endDate: faker.date.future(),
       type: LIST_TYPES[Math.floor(Math.random() * 3)],
       status,
-      meta: {},
+      meta: {
+        a: '1',
+      },
       users,
       winners: [],
     }
