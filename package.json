@@ -12,9 +12,10 @@
   },
   "scripts": {
     "dev": "gulp serve",
-    "start": "node index.js",
+    "start": "cd ./dist/ && node index.js",
     "start:debug": "cross-env DEBUG=express-mongoose-es6-rest-api:* yarn start",
     "build": "gulp",
+    "precommit": "npm run build",
     "lint": "esw *.js server config --color",
     "lint:watch": "yarn lint -- --watch",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --compilers js:babel-core/register server/tests --recursive",
