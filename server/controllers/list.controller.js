@@ -126,7 +126,7 @@ function addUser(req, res, next) {
 }
 
 function removeUser(req, res, next) {
-  const { id } = req.encoded
+  const { _id } = req.encoded
   const listInReq = req.list
   if (!listInReq.users.includes(id)) {
     next(new Error('The user is not in the queue', id))
