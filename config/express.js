@@ -54,12 +54,12 @@ app.use(cors())
 // }
 
 // mount all routes on /api path
-app.post('/mail', (req, res, next) => {
-  sendMail()
-  // setTimeout(() => {
-  res.send('ok')
-  // }, 3000)
-})
+// app.post('/mail', (req, res, next) => {
+//   sendMail()
+//   // setTimeout(() => {
+//   res.send('ok')
+//   // }, 3000)
+// })
 app.use('/auth', authRoute)
 app.use('/api', (req, res, next) => {
   console.log('will validate /api route')
