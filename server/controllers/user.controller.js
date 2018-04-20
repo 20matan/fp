@@ -16,63 +16,49 @@ import { validate } from '../helpers/utils'
 export const findById = (req, res, next) => {
   const { id } = req.params
   console.log('id params in findById = ', id)
-  User.get(id)
-  .then(user => res.json(user))
-  .catch(e => next(e))
+  User.get(id).then(user => res.json(user)).catch(e => next(e))
 }
 
 export const create = (req, res, next) => {
   const userData = validate(req.body, ['username', 'password'])
   const user = new User(userData)
 
-  user
-    .save()
-    .then(savedUser => res.json(savedUser))
-    .catch(e => next(e))
+  user.save().then(savedUser => res.json(savedUser)).catch(e => next(e))
 }
 
 export const update = (req, res, next) => {
   const { id } = req.params
 
   User.get(id)
-  .then((user) => {
-    Object.keys(req.body).forEach((k) => {
-      user[k] = req.body[k]
+    .then((user) => {
+      Object.keys(req.body).forEach((k) => {
+        user[k] = req.body[k]
+      })
+      return user.save()
     })
-    return user.save()
-  })
-  .then(user => res.send({ success: true, user }))
-  .catch(e => next(e))
+    .then(user => res.send({ success: true, user }))
+    .catch(e => next(e))
 }
 
 export const list = (req, res, next) => {
   const { limit = 50, skip = 0 } = req.query
-  User.list({ limit, skip })
-    .then(users => res.json(users))
-    .catch(e => next(e))
+  User.list({ limit, skip }).then(users => res.json(users)).catch(e => next(e))
 }
 
 export const remove = (req, res, next) => {
   const { user } = req
-  user
-    .remove()
-    .then(deletedUser => res.json(deletedUser))
-    .catch(e => next(e))
+  user.remove().then(deletedUser => res.json(deletedUser)).catch(e => next(e))
 }
 
 export const getCreatedLists = (req, res, next) => {
   // const { user } = req.encoded
   const { id } = req.params
-  List.byCreators(id)
-    .then(lists => res.json(lists))
-    .catch(e => next(e))
+  List.byCreators(id).then(lists => res.json(lists)).catch(e => next(e))
 }
 
 export const getRegisteredLists = (req, res, next) => {
   const { id } = req.params
-  List.findByUser(id)
-    .then(lists => res.json(lists))
-    .catch(e => next(e))
+  List.findByUser(id).then(lists => res.json(lists)).catch(e => next(e))
 }
 
 export const getWonLists = (req, res, next) => {
@@ -99,16 +85,32 @@ export const addComment = (req, res, next) => {
   }
 
   User.get(userId)
-  .then((user) => {
-    user.comments.push({
-      userId: commentorId,
-      content,
-      rating,
-      picture_url: req.encoded.user.picture_url,
-      username: req.encoded.user.username
+    .then((user) => {
+      user.comments.push({
+        userId: commentorId,
+        content,
+        rating,
+        picture_url: req.encoded.user.picture_url,
+        username: req.encoded.user.username
+      })
+      return user.save()
     })
-    return user.save()
-  })
-  .then(() => res.send({ success: true }))
-  .catch(e => next(e))
+    .then(() => res.send({ success: true }))
+    .catch(e => next(e))
+}
+
+export const deleteComment = (req, res, next) => {
+  console.log('in delete!!!')
+  const commentorId = req.encoded.user._id
+
+  const userId = req.params.id
+
+  User.get(userId)
+    .then((user) => {
+      user.comments = user.comments.filter(c => c.userId !== commentorId)
+      console.log('commentorId', commentorId)
+      return user.save()
+    })
+    .then(() => res.send({ success: true }))
+    .catch(e => next(e))
 }
