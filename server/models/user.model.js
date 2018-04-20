@@ -6,58 +6,61 @@ import APIError from '../helpers/APIError'
 /**
  * User Schema
  */
-const UserSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
-  username: {
-    type: String,
-    required: true
-  },
-  picture_url: {
-    type: String,
-  },
-  email: {
-    type: String,
-    required: true
-  },
-  comments: {
-    type: Array, // username, picture_url, rating (currently null), content, userId, date
-  },
-  mobileNumber: {
-    type: String
-  },
-  darkon: {
-    type: String
-  },
-  drivingLicense: {
-    type: String
-  },
-  creditCard: new mongoose.Schema({
-    number: {
+const UserSchema = new mongoose.Schema(
+  {
+    id: {
       type: String,
-      get: cc => `****-****-****-${cc.slice(cc.length - 4, cc.length)}`
+      required: true
     },
-    expire: {
+    username: {
+      type: String,
+      required: true
+    },
+    picture_url: {
       type: String
     },
-    cvc: {
+    email: {
+      type: String,
+      required: true
+    },
+    comments: {
+      type: Array // username, picture_url, rating (currently null), content, userId, date
+    },
+    mobileNumber: {
       type: String
     },
-    name: {
+    darkon: {
       type: String
+    },
+    drivingLicense: {
+      type: String
+    },
+    creditCard: new mongoose.Schema({
+      number: {
+        type: String,
+        get: cc => `****-****-****-${cc.slice(cc.length - 4, cc.length)}`
+      },
+      expire: {
+        type: String
+      },
+      cvc: {
+        type: String
+      },
+      name: {
+        type: String
+      }
+    }),
+    createdAt: {
+      type: Date,
+      default: Date.now
     }
-  }),
-  createdAt: {
-    type: Date,
-    default: Date.now
+  },
+  {
+    usePushEach: true
+    // was getting an error caused by different mongo versions.
+    // This tells the mongo to use push instead of pushAll which doesn't exist in certain versions
   }
-}, {
-  usePushEach: true
-  // was getting an error caused by different mongo versions.
-  // This tells the mongo to use push instead of pushAll which doesn't exist in certain versions
-})
+)
 
 /**
  * Add your
@@ -123,10 +126,7 @@ UserSchema.statics = {
    * @returns {Promise<User[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
-      .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit)
+    return this.find().sort({ createdAt: -1 }).skip(+skip).limit(+limit)
     // .exec()
   }
 }

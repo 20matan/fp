@@ -16,7 +16,19 @@ import { validate } from '../helpers/utils'
 export const findById = (req, res, next) => {
   const { id } = req.params
   console.log('id params in findById = ', id)
-  User.get(id).then(user => res.json(user)).catch(e => next(e))
+  User.get(id)
+    .then((user) => {
+      let totalScore = 0
+      user.comments.forEach((c) => {
+        totalScore += +c.rating
+      })
+      const avg = totalScore / user.comments.length
+      console.log('avg', avg)
+      const avgScore = avg ? avg.toFixed(1).replace(/[.,]00$/, '') : '-'
+      const userWithAvg = Object.assign({}, user.toObject(), { avgScore })
+      return res.json(userWithAvg)
+    })
+    .catch(e => next(e))
 }
 
 export const create = (req, res, next) => {
@@ -85,16 +97,25 @@ export const addComment = (req, res, next) => {
     return next(new Error('content cannot be empty'))
   }
 
-  User.get(userId)
+  return User.get(userId)
     .then((user) => {
-      user.comments.push({
-        userId: commentorId,
-        content,
-        rating,
-        picture_url: req.encoded.user.picture_url,
-        username: req.encoded.user.username,
-        date
-      })
+      if (user.comments.filter(c => c.userId === commentorId).length > 0) {
+        user.comments = user.comments.map((c) => {
+          if (c.userId === commentorId) {
+            return Object.assign({}, c, { rating })
+          }
+          return c
+        })
+      } else {
+        user.comments.push({
+          userId: commentorId,
+          content,
+          rating,
+          picture_url: req.encoded.user.picture_url,
+          username: req.encoded.user.username,
+          date
+        })
+      }
       return user.save()
     })
     .then(() => res.send({ success: true }))
@@ -107,7 +128,7 @@ export const deleteComment = (req, res, next) => {
 
   const userId = req.params.id
 
-  User.get(userId)
+  return User.get(userId)
     .then((user) => {
       user.comments = user.comments.filter(c => c.userId !== commentorId)
       console.log('commentorId', commentorId)
