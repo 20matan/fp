@@ -50,7 +50,7 @@ const ListSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'active', 'done', 'deny']
+    enum: ['pending', 'approved', 'active', 'done', 'deny']
   },
   meta: {
     type: Object,

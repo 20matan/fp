@@ -19,12 +19,18 @@ export const getPendingLists = (req, res, next) => {
   .catch(e => next(e))
 }
 
+export const getApprovedLists = (req, res, next) => {
+  List.find({ status: 'approved' })
+  .then(lists => res.json(lists))
+  .catch(e => next(e))
+}
+
 export const acceptList = (req, res, next) => {
   console.log('accept list')
   const { id } = req.params
   List.get(id)
   .then((list) => {
-    list.status = 'active'
+    list.status = 'approved'
     return list.save()
   })
   .then(() => {
