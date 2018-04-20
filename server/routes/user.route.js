@@ -18,6 +18,8 @@ router.get('/:id/lists', userCtrl.getRegisteredLists)
 router.get('/:id/wins', userCtrl.getWonLists)
 router.post('/:id/comment', userCtrl.addComment)
 router.delete('/:id/comment', userCtrl.deleteComment)
+router.post('/:id/subscribe', userCtrl.addSubscription)
+router.delete('/:id/subscribe', userCtrl.removeSubscription)
 
 // /** Load user when API with userId route parameter is hit */
 // router.param('username', userCtrl.load)

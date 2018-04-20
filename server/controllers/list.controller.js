@@ -1,6 +1,7 @@
 import List from '../models/list.model'
 import User from '../models/user.model'
 import { validate } from '../helpers/utils'
+import sendEmail from '../helpers/mail'
 
 function load(req, res, next, id) {
   List.get(id)
@@ -147,9 +148,34 @@ function removeUser(req, res, next) {
 }
 
 function startList(req, res, next) {
+  if (req.list.status !== 'approved') {
+    throw new Error(`The list status is ${req.list.status}.`)
+  }
   return _update(req.list, { status: 'active' })
-  .then(a => res.json(a))
-  .catch(e => next(e))
+    .then((updatedList) => {
+      const { creator } = updatedList
+      console.log('creator', creator)
+      return User.get(creator).then((user) => {
+        const text = `Hello ${req.encoded.user.username}, 
+we wanted to inform you that ${user.username} has published new list:
+${updatedList.description}
+Get in now and be the firt one to register!`
+        const { subscribers } = user
+        subscribers.forEach(s => sendEmail(s.email, `W8 - ${user.username} - New List`, text))
+        res.json(updatedList)
+      })
+    })
+    .catch(e => next(e))
 }
 
-export default { get, create, update, list, load, remove, addUser, removeUser, startList }
+export default {
+  get,
+  create,
+  update,
+  list,
+  load,
+  remove,
+  addUser,
+  removeUser,
+  startList
+}

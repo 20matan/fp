@@ -8,15 +8,16 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-const mailOptions = {
-  from: 'qqqafa@gmail.com',
-  // to: '20matan@gmail.com ',
-  subject: 'Wooow! you won the list!! ✔',
-  text: 'You have won the list, click here for redeem (todo)'
-}
+const FROM_SENDER = 'qqqafa@gmail.com'
+const WIN_SUBJECT = 'Wooow! you won the list!! ✔'
+const WIN_TEXT = 'You have won the list, click here for redeem (todo)'
 
-
-const sendMail = email =>
-    transporter.sendMail(Object.assign({}, mailOptions, { to: email }))
+const sendMail = (email, subject = WIN_SUBJECT, text = WIN_TEXT) =>
+  transporter.sendMail({
+    from: FROM_SENDER,
+    to: email,
+    subject,
+    text
+  })
 
 export default sendMail

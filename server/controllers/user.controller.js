@@ -123,7 +123,6 @@ export const addComment = (req, res, next) => {
 }
 
 export const deleteComment = (req, res, next) => {
-  console.log('in delete!!!')
   const commentorId = req.encoded.user._id
 
   const userId = req.params.id
@@ -132,6 +131,41 @@ export const deleteComment = (req, res, next) => {
     .then((user) => {
       user.comments = user.comments.filter(c => c.userId !== commentorId)
       console.log('commentorId', commentorId)
+      return user.save()
+    })
+    .then(() => res.send({ success: true }))
+    .catch(e => next(e))
+}
+
+export const addSubscription = (req, res, next) => {
+  const userId = req.params.id
+  const { _id, email } = req.encoded.user
+
+  return User.get(userId)
+    .then((user) => {
+      if (user.subscribers.filter(c => c.userId === _id).length > 0) {
+        throw new Error('Already subscribed')
+      } else {
+        user.subscribers.push({
+          userId: _id,
+          email,
+          date: new Date()
+        })
+      }
+      return user.save()
+    })
+    .then(() => res.send({ success: true }))
+    .catch(e => next(e))
+}
+
+export const removeSubscription = (req, res, next) => {
+  const { _id } = req.encoded.user
+
+  const userId = req.params.id
+
+  return User.get(userId)
+    .then((user) => {
+      user.subscribers = user.subscribers.filter(c => c.userId !== _id)
       return user.save()
     })
     .then(() => res.send({ success: true }))

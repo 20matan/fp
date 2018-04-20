@@ -24,7 +24,11 @@ const UserSchema = new mongoose.Schema(
       required: true
     },
     comments: {
-      type: Array // username, picture_url, rating (currently null), content, userId, date
+      type: Array // userId, username, picture_url, rating (currently null), content, date
+    },
+    subscribers: {
+      type: Array,
+      default: [] // userId, email
     },
     mobileNumber: {
       type: String
