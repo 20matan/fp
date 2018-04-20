@@ -75,6 +75,7 @@ export const getWonLists = (req, res, next) => {
 export const addComment = (req, res, next) => {
   const commentorId = req.encoded.user._id
   const { content, rating } = req.body
+  const date = new Date()
 
   const userId = req.params.id
 
@@ -91,7 +92,8 @@ export const addComment = (req, res, next) => {
         content,
         rating,
         picture_url: req.encoded.user.picture_url,
-        username: req.encoded.user.username
+        username: req.encoded.user.username,
+        date
       })
       return user.save()
     })
