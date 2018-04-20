@@ -161,11 +161,32 @@ we wanted to inform you that ${user.username} has published new list:
 ${updatedList.description}
 Get in now and be the firt one to register!`
         const { subscribers } = user
-        subscribers.forEach(s => sendEmail(s.email, `W8 - ${user.username} - New List`, text))
+        subscribers.forEach(s =>
+          sendEmail(s.email, `W8 - ${user.username} - New List`, text)
+        )
         res.json(updatedList)
       })
     })
     .catch(e => next(e))
+}
+
+function redeem(req, res, next) {
+  const redeemerId = req.encoded.user._id
+  if (req.list.currentRedeemers.indexOf(redeemerId) !== -1) {
+    // return _update(req.list, {}).then(r => res.json(r)).catch(e => next(e))
+    req.list.winners.push(redeemerId)
+    sendEmail(
+      req.encoded.user.email,
+      `You have redeemed list ${req.list.title}`,
+      `Congratz! You have redeemed the list ${req.list.title}.`
+    )
+    return req.list.save().then(savedList => res.json(savedList)).catch((e) => {
+      console.error('e on save', e)
+      next(e)
+    })
+  } else {
+    throw new Error('Oops, you are not in the redeemers')
+  }
 }
 
 export default {
@@ -177,5 +198,6 @@ export default {
   remove,
   addUser,
   removeUser,
-  startList
+  startList,
+  redeem
 }

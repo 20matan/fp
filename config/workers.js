@@ -3,6 +3,51 @@ import List from '../server/models/list.model'
 import sendEmail from '../server/helpers/mail'
 import sendSMS from '../server/helpers/sms'
 
+const TIME_TO_REDEEM = 1000 * 60 * 15 // 15 mins
+const changeRedeemers = (listId) => {
+  List.findById(listId).then((list) => {
+    console.log('changeRedeemers')
+    const { users } = list
+    const { currentRedeemersIndex = 0 } = list
+    console.log('currentRedeemersIndex', currentRedeemersIndex)
+
+    const skip = currentRedeemersIndex * list.amount - list.winners.length
+    const winnersLeft = list.amount - list.winners.length
+
+    if (list.winners.length === list.amount || skip > users.length) {
+      // we're done
+      list.status = 'done'
+      list.save()
+      console.log('ok thats it')
+      return
+    }
+    const redeemersIds = users.slice(skip, skip + winnersLeft)
+    console.log(
+      'a',
+      currentRedeemersIndex,
+      list.amount,
+      winnersLeft,
+      list.amount,
+      list.winners.length
+    )
+    console.log('redeemersIds', redeemersIds)
+    list.currentRedeemersIndex += 1
+    list.currentRedeemers = redeemersIds
+    list.save().then(() => {
+      const redeemersUsersPromise = redeemersIds.map(id => User.get(id))
+      Promise.all(redeemersUsersPromise).then((usersFromPromise) => {
+        usersFromPromise.forEach((u) => {
+          sendEmail(u.email)
+          if (u.mobileNumber) {
+            sendSMS(u.mobileNumber, list.title)
+          }
+        })
+      })
+      setTimeout(() => changeRedeemers(listId), TIME_TO_REDEEM)
+    })
+  })
+}
+
 // every minute check for non finished lists
 const finishList = (list) => {
   const { users } = list
@@ -13,34 +58,13 @@ const finishList = (list) => {
     list.save()
     return
   }
-  
-  console.log('keep goin')
-  const winnerIds = users.slice(0, list.amount)
-  list.winners = winnerIds
-  list.status = 'done'
+
+  list.status = 'redeem'
   list.save().then(() => {
-    console.log('after1')
-    const winnerIdsPromises = winnerIds.map(id => User.get(id))
-    console.log('winnerIdsPromises', winnerIdsPromises)
-    Promise.all(winnerIdsPromises).then((usersFromPromise) => {
-      console.log('inside the promise all')
-      // console.log('users', usersFromPromise)
-      // const emails = usersFromPromise.map(u => u.email) 
-      usersFromPromise.forEach((u) => {
-        console.log('current in user', u.email, u.mobileNumber)
-        sendEmail(u.email)
-        if (u.mobileNumber) {
-          console.log('gonna send win sms to', u.mobileNumber)
-          sendSMS(u.mobileNumber, list.title)
-        }
-      })
-      // const phoneNumbers = usersFromPromise.map(u => u.phoneNumber)
-      // console.log('emails', emails)
-      // emails.map(sendEmail)
-      // phoneNumbers.map(sendSMS)
-    })
+    changeRedeemers(list._id)
   })
 }
+
 const fetchAllLists = () => {
   List.getPassedButNonFinished().then((lists) => {
     console.log(

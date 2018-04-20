@@ -23,6 +23,7 @@ router.route('/:listId')
 router.post('/:listId/addUser', listCtrl.addUser)
 router.delete('/:listId/removeUser', listCtrl.removeUser)
 router.post('/:listId/start', listCtrl.startList)
+router.post('/:listId/redeem', listCtrl.redeem)
 
 router.param('listId', listCtrl.load)
 

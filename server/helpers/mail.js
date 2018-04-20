@@ -12,12 +12,15 @@ const FROM_SENDER = 'qqqafa@gmail.com'
 const WIN_SUBJECT = 'Wooow! you won the list!! ✔'
 const WIN_TEXT = 'You have won the list, click here for redeem (todo)'
 
-const sendMail = (email, subject = WIN_SUBJECT, text = WIN_TEXT) =>
+const sendMail = (email, subject = WIN_SUBJECT, text = WIN_TEXT) => {
+  console.log('gonna send email', email, subject, text)
   transporter.sendMail({
     from: FROM_SENDER,
     to: email,
     subject,
     text
   })
+
+}
 
 export default sendMail

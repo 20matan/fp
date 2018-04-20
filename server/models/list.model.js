@@ -50,13 +50,21 @@ const ListSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'active', 'done', 'deny']
+    enum: ['pending', 'approved', 'active', 'redeem', 'done', 'deny']
   },
   meta: {
     type: Object,
     required: true,
   },
   users: {
+    type: Array,
+    default: []
+  },
+  currentRedeemersIndex: {
+    type: Number,
+    default: 0,
+  },
+  currentRedeemers: {
     type: Array,
     default: []
   },
