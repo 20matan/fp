@@ -62,7 +62,8 @@ app.use(cors())
 //   // }, 3000)
 // })
 app.use('/auth', authRoute)
-app.use('/list', listCtrl.list)
+app.get('/list', listCtrl.list)
+app.get('/list/:listId', listCtrl.get)
 app.use('/api', (req, res, next) => {
   console.log('will validate /api route')
   const token = req.cookies['access-token']

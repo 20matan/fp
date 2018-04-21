@@ -13,8 +13,10 @@ function load(req, res, next, id) {
     .catch(e => next(e))
 }
 
-function get(req, res) {
-  return res.json(req.list)
+function get(req, res, next) {
+  return List.get(req.params.listId)
+    .then(listFromDB => res.json(listFromDB))
+    .catch(e => next(e))
 }
 
 function create(req, res, next) {
@@ -184,9 +186,8 @@ function redeem(req, res, next) {
       console.error('e on save', e)
       next(e)
     })
-  } else {
-    throw new Error('Oops, you are not in the redeemers')
   }
+  throw new Error('Oops, you are not in the redeemers')
 }
 
 export default {
