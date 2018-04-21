@@ -15,6 +15,7 @@ import config from './config'
 import APIError from '../server/helpers/APIError'
 import authRoute from '../server/routes/auth.route'
 import { validateToken } from '../server/helpers/auth'
+import listCtrl from '../server/controllers/list.controller'
 
 import sendMail from '../server/helpers/mail'
 
@@ -61,6 +62,7 @@ app.use(cors())
 //   // }, 3000)
 // })
 app.use('/auth', authRoute)
+app.use('/list', listCtrl.list)
 app.use('/api', (req, res, next) => {
   console.log('will validate /api route')
   const token = req.cookies['access-token']
