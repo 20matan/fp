@@ -236,7 +236,7 @@ const _fromSameLocation = (locationA, locationB) => {
 const _sortBySimiliarty = originalList => (listAModel, listBModel) => {
   const PRICE_WEIGHT = 5
   const LOCATION_WEIGHT = 100
-  const START_DATE_WEIGHT = 15
+  const START_DATE_WEIGHT = 30
   const END_DATE_WEIGHT = 15
 
   const listA = listAModel.toObject()
