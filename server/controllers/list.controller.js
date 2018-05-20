@@ -316,7 +316,7 @@ async function getSimiliar(req, res, next) {
     // const thisList = req.list
 
     // find the most similiar
-    const topSimiliar = lists.sort(_sortBySimiliarty(reqList))
+    const topSimiliar = lists.sort(_sortBySimiliarty(reqList)).slice(0, 5)
     return res.json(topSimiliar)
   } catch (e) {
     console.error('error', e)
