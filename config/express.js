@@ -66,19 +66,19 @@ app.get('/list', listCtrl.list)
 app.get('/list/:listId', listCtrl.get)
 app.use('/api', (req, res, next) => {
   console.log('will validate /api route')
-  const token = req.cookies['access-token']
+  // const token = req.cookies['access-token']
 
   // NOTE: Temporary workaround
   if (req.originalUrl === '/api/auth') {
     return next()
   }
 
-  if (!token) {
-    return next(new Error('No access-token header provided'))
-  }
-  const encodedData = validateToken(token)
-  console.log('encodedData', encodedData)
-  req.encoded = { user: encodedData } // eslint-disable-line no-global-assign
+  // if (!token) {
+  //   return next(new Error('No access-token header provided'))
+  // }
+  // const encodedData = validateToken(token)
+  // console.log('encodedData', encodedData)
+  // req.encoded = { user: encodedData } // eslint-disable-line no-global-assign
   next()
 })
 app.use('/api/admin', (req, res, next) => {

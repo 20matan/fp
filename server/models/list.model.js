@@ -130,7 +130,7 @@ ListSchema.statics = {
     return this.findById(id)
       // .exec()
       .then((listFromDB) => {
-        console.log('list', id, listFromDB)
+        // console.log('list', id, listFromDB)
         if (listFromDB) {
           console.log('RETURN LIST')
           return listFromDB
@@ -175,6 +175,9 @@ ListSchema.statics = {
       .skip(+skip)
       .limit(+limit)
       // .exec()
+  },
+  getActiveExccept(id) {
+    return this.find({ status: 'active', _id: { $ne: id } })
   },
   byCreators(userId) {
     return this.find({ creator: userId })

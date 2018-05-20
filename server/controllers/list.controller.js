@@ -6,7 +6,7 @@ import sendEmail from '../helpers/mail'
 function load(req, res, next, id) {
   List.get(id)
     .then((listFromDB) => {
-      console.log('got list from db')
+      // console.log('got list from db')
       req.list = listFromDB // eslint-disable-line no-param-reassign
       return next()
     })
@@ -15,12 +15,14 @@ function load(req, res, next, id) {
 
 function get(req, res, next) {
   return List.get(req.params.listId)
-    .then(listFromDB => User.get(listFromDB.creator).then((creator) => {
-      const listWithCreator = Object.assign({}, listFromDB.toObject(), {
-        creatorName: creator.username
+    .then(listFromDB =>
+      User.get(listFromDB.creator).then((creator) => {
+        const listWithCreator = Object.assign({}, listFromDB.toObject(), {
+          creatorName: creator.username
+        })
+        res.json(listWithCreator)
       })
-      res.json(listWithCreator)
-    }))
+    )
     .catch(e => next(e))
 }
 
@@ -88,7 +90,6 @@ function list(req, res, next) {
   console.log('query', query)
   List.list(query).then(lists => res.json(lists)).catch(e => next(e))
 }
-
 
 function remove(req, res, next) {
   const reqList = req.list
@@ -196,6 +197,133 @@ function redeem(req, res, next) {
   throw new Error('Oops, you are not in the redeemers')
 }
 
+const _getPlacesForList = (places) => {
+  // console.log('places', places)
+  const aPlaces = places.split(',')
+  aPlaces[1] = aPlaces[1].substring(1, aPlaces[1].length)
+  return aPlaces
+}
+const _fromSameLocation = (locationA, locationB) => {
+  // console.log('location a', locationA, 'locaiton b', locationB)
+  const placesA = _getPlacesForList(locationA)
+  const placesB = _getPlacesForList(locationB)
+  for (let i = 0; i < placesA.length; i += 1) {
+    for (let j = 0; j < placesB.length; j += 1) {
+      // console.log(
+      //   '_fromSameLocation',
+      //   'location A = ',
+      //   locationA,
+      //   'location B = ',
+      //   locationB
+      // )
+      // console.log(
+      //   '_fromSameLocation',
+      //   'placesA[i] = ',
+      //   placesA[i],
+      //   'placesB[j] = ',
+      //   placesB[j]
+      // )
+      if (placesA[i] === placesB[j]) {
+        console.log('_fromSameLocation will return true now')
+        return true
+      }
+    }
+  }
+
+  // console.log('_fromSameLocation FALSE')
+  return false
+}
+const _sortBySimiliarty = originalList => (listAModel, listBModel) => {
+  const PRICE_WEIGHT = 5
+  const LOCATION_WEIGHT = 100
+  const START_DATE_WEIGHT = 15
+  const END_DATE_WEIGHT = 15
+
+  const listA = listAModel.toObject()
+  const listB = listBModel.toObject()
+
+  let similiarA = 0
+  let similiarB = 0
+
+  // by location
+  const locationA = listA.location
+  const locationB = listB.location
+  if (_fromSameLocation(originalList.location, locationA)) {
+    similiarA += LOCATION_WEIGHT
+  }
+  if (_fromSameLocation(originalList.location, locationB)) {
+    similiarB += LOCATION_WEIGHT
+  }
+
+  // by price
+  const priceA = listA.price
+  const priceB = listB.price
+  const diffPriceA = Math.abs(priceA - originalList.price)
+  const diffPriceB = Math.abs(priceB - originalList.price)
+  // console.log('diffPriceA = ', diffPriceA, 'diffPriceB = ', diffPriceB)
+  if (diffPriceA < diffPriceB) {
+    similiarA += PRICE_WEIGHT
+  } else {
+    similiarB += PRICE_WEIGHT
+  }
+
+  // by start date
+  const starDateA = listA.startDate
+  const starDateB = listB.startDate
+  const diffDateA = Math.abs(starDateA - originalList.startDate)
+  const diffDateB = Math.abs(starDateB - originalList.startDate)
+  // console.log('diffDateA = ', diffDateA, 'diffPriceB = ', diffDateB)
+  if (diffDateA < diffDateB) {
+    similiarA += START_DATE_WEIGHT
+  } else {
+    similiarB += START_DATE_WEIGHT
+  }
+
+  // by end date
+  const endDateA = listA.endDate
+  const endDateB = listB.endDate
+  const diffEndDateA = Math.abs(endDateA - originalList.startDate)
+  const diffEndDateB = Math.abs(endDateB - originalList.startDate)
+  // console.log('diffEndDateA = ', diffEndDateA, 'diffEndDateB = ', diffEndDateB)
+  if (diffEndDateA < diffEndDateB) {
+    similiarA += END_DATE_WEIGHT
+  } else {
+    similiarB += END_DATE_WEIGHT
+  }
+
+  console.log('=============== similiartiy: ====================')
+  console.log('listA: ', listA._id, similiarA)
+  console.log('listB: ', listB._id, similiarB)
+  console.log('=============== end =============================')
+  if (similiarA > similiarB) {
+    return -1
+  }
+  if (similiarB > similiarA) {
+    return 1
+  }
+  return 0
+}
+async function getSimiliar(req, res, next) {
+  const query = Object.assign({}, { status: 'active' })
+  console.log('query', query)
+  if (!req.params.listId) {
+    return next('No list id parameter was supplied')
+  }
+  try {
+    const lists = await List.getActiveExccept(req.params.listId)
+    const reqList = await List.get(req.params.listId)
+
+    // const thisList = req.list
+
+    // find the most similiar
+    const topSimiliar = lists.sort(_sortBySimiliarty(reqList))
+    return res.json(topSimiliar)
+  } catch (e) {
+    console.error('error', e)
+    return next(e)
+  }
+}
+
 export default {
   get,
   create,
@@ -206,5 +334,6 @@ export default {
   addUser,
   removeUser,
   startList,
-  redeem
+  redeem,
+  getSimiliar
 }
