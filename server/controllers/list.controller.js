@@ -15,7 +15,12 @@ function load(req, res, next, id) {
 
 function get(req, res, next) {
   return List.get(req.params.listId)
-    .then(listFromDB => res.json(listFromDB))
+    .then(listFromDB => User.get(listFromDB.creator).then((creator) => {
+      const listWithCreator = Object.assign({}, listFromDB.toObject(), {
+        creatorName: creator.username
+      })
+      res.json(listWithCreator)
+    }))
     .catch(e => next(e))
 }
 
@@ -83,6 +88,7 @@ function list(req, res, next) {
   console.log('query', query)
   List.list(query).then(lists => res.json(lists)).catch(e => next(e))
 }
+
 
 function remove(req, res, next) {
   const reqList = req.list
