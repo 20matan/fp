@@ -17,4 +17,4 @@ const validate = (data, fields) => {
 }
 const facebookAuth = accessToken => axios.get(getFacebookURL(accessToken))
 
-export default { validate, facebookAuth }
+export { validate, facebookAuth }
