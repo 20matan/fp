@@ -200,7 +200,11 @@ function redeem(req, res, next) {
 const _getPlacesForList = (places) => {
   // console.log('places', places)
   const aPlaces = places.split(',')
-  aPlaces[1] = aPlaces[1].substring(1, aPlaces[1].length)
+  try {
+    aPlaces[1] = aPlaces[1].substring(1, aPlaces[1].length)
+  } catch (e) {
+    aPlaces[1] = 'undefined'
+  }
   return aPlaces
 }
 const _fromSameLocation = (locationA, locationB) => {
