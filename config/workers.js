@@ -38,9 +38,9 @@ const changeRedeemers = (listId) => {
       const redeemersUsersPromise = redeemersIds.map(id => User.get(id))
       Promise.all(redeemersUsersPromise).then((usersFromPromise) => {
         usersFromPromise.forEach((u) => {
-          sendEmail(u.email)
+          sendEmail(u.email, listId)
           if (u.mobileNumber) {
-            sendSMS(u.mobileNumber, list.title)
+            sendSMS(u.mobileNumber, list.title, listId)
           }
         })
       })

@@ -5,9 +5,9 @@ const authToken = '9fd73be51cd71cd2549c80e1a90f50ac' // Your Auth Token from www
 
 const client = new Twilio(accountSid, authToken)
 
-const sendSMS = (number, listName) =>
+const sendSMS = (number, listName, listId = '') =>
   client.messages.create({
-    body: `You won the list ${listName}, enter https://w8-front.herokuapp.com to redeem prize`,
+    body: `You won the list ${listName}, enter https://w8-front.herokuapp.com/list/${listId} to redeem prize`,
     to: number, // Text this number
     from: '+13473345499' // From a valid Twilio number
   })
