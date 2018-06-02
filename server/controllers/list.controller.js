@@ -2,6 +2,7 @@ import List from '../models/list.model'
 import User from '../models/user.model'
 import { validate } from '../helpers/utils'
 import sendEmail from '../helpers/mail'
+import sendEmailSub from '../helpers/mail-sub'
 
 function load(req, res, next, id) {
   List.get(id)
@@ -48,7 +49,19 @@ function create(req, res, next) {
     status: 'pending'
   })
   const newList = new List(withCreator)
-  newList.save().then(savedList => res.json(savedList)).catch((e) => {
+  newList.save()
+  .then((savedList) => {
+    // send emails to whoever subbed
+    User.get(creator)
+      .then((user) => {
+        user.subscribers.forEach((u) => {
+          sendEmailSub(u.email, user.username, savedList.id)
+        })
+      })
+    // send emails for new list`
+    res.json(savedList)
+  })
+  .catch((e) => {
     console.error('e on save', e)
     next(e)
   })
