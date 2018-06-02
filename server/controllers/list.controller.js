@@ -296,10 +296,10 @@ const _sortBySimiliarty = originalList => (listAModel, listBModel) => {
     similiarB += END_DATE_WEIGHT
   }
 
-  console.log('=============== similiartiy: ====================')
-  console.log('listA: ', listA._id, similiarA)
-  console.log('listB: ', listB._id, similiarB)
-  console.log('=============== end =============================')
+  // console.log('=============== similiartiy: ====================')
+  // console.log('listA: ', listA._id, similiarA)
+  // console.log('listB: ', listB._id, similiarB)
+  // console.log('=============== end =============================')
   if (similiarA > similiarB) {
     return -1
   }
