@@ -35,6 +35,10 @@ const ListSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  listEndDate: {
+    type: Date,
+    requierd: true,
+  },
   startDate: {
     type: Date,
     required: true,
@@ -93,7 +97,7 @@ const ListSchema = new mongoose.Schema({
 //  */
 ListSchema.methods = {
   finish() {
-    this.endDate = Date.now()
+    this.listEndDate = Date.now()
     this.save()
   }
 }
@@ -120,7 +124,7 @@ ListSchema.statics = {
     console.log('getPassedButNonFinished')
     // get all lists which end date was passed but we didnt send emails
     return this.find({
-      endDate: {
+      listEndDate: {
         $lt: Date.now()
       },
       status: 'active'
