@@ -76,7 +76,7 @@ const ListSchema = new mongoose.Schema({
     type: Array,
     default: []
   },
-  roundStartDate: {
+  roundEndDate: {
     type: Date,
   },
   winners: { // User.id
