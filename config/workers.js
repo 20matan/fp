@@ -3,7 +3,7 @@ import List from '../server/models/list.model'
 import sendEmail from '../server/helpers/mail'
 import sendSMS from '../server/helpers/sms'
 
-const TIME_TO_REDEEM = 1000 * 60 * 15 // 15 mins
+const TIME_TO_REDEEM = 1000 * 60 * 2 // 15 mins
 const changeRedeemers = (listId) => {
   List.findById(listId).then((list) => {
     console.log('changeRedeemers')
