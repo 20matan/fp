@@ -60,6 +60,10 @@ const ListSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
+  images: {
+    type: Array,
+    default: []
+  },
   users: {
     type: Array,
     default: []

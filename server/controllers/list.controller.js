@@ -33,6 +33,7 @@ function create(req, res, next) {
     'description',
     'price',
     'startDate',
+    'images',
     'endDate',
     'type',
     'meta',
