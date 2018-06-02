@@ -79,7 +79,7 @@ const fetchAllLists = () => {
 const init = () => {
   console.log('init workers function')
   fetchAllLists()
-  setInterval(fetchAllLists, 60000)
+  setInterval(fetchAllLists, 5000)
 }
 
 export default init
