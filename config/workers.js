@@ -33,6 +33,7 @@ const changeRedeemers = (listId) => {
     console.log('redeemersIds', redeemersIds)
     list.currentRedeemersIndex += 1
     list.currentRedeemers = redeemersIds
+    list.roundStartDate = Date.now()
     list.save().then(() => {
       const redeemersUsersPromise = redeemersIds.map(id => User.get(id))
       Promise.all(redeemersUsersPromise).then((usersFromPromise) => {
