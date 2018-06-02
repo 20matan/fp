@@ -7,7 +7,7 @@ const client = new Twilio(accountSid, authToken)
 
 const sendSMS = (number, listName) =>
   client.messages.create({
-    body: `You won the list ${listName}, enter http://myLists.com to redeem prize`,
+    body: `You won the list ${listName}, enter https://w8-front.herokuapp.com to redeem prize`,
     to: number, // Text this number
     from: '+13473345499' // From a valid Twilio number
   })
