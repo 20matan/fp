@@ -55,8 +55,12 @@ app.use(cors())
 // }
 
 // mount all routes on /api path
+app.get('/mail', (req, res) => {
+  sendMail('20matan@gmail.com', 'Wooow! you won the list!! ✔', 'You have won the list, click here for redeem https://w8-front.herokuapp.com', (a, b) => {
+    res.send({ err: a, ans: b })
+  })
+})
 // app.post('/mail', (req, res, next) => {
-sendMail('20matan@gmail.com')
 //   // setTimeout(() => {
 //   res.send('ok')
 //   // }, 3000)
