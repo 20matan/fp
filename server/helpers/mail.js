@@ -19,6 +19,8 @@ const sendMail = (email, subject = WIN_SUBJECT, text = WIN_TEXT) => {
     to: email,
     subject,
     text
+  }, (err, inf) => {
+    console.log('after the send mail', err, inf)
   })
 }
 
