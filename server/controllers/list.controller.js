@@ -37,7 +37,8 @@ function create(req, res, next) {
     'type',
     'meta',
     'location',
-    'amount'
+    'amount',
+    'listEndDate',
   ])
 
   const creator = req.encoded.user._id
@@ -165,7 +166,7 @@ function startList(req, res, next) {
       const { creator } = updatedList
       console.log('creator', creator)
       return User.get(creator).then((user) => {
-        const text = `Hello ${req.encoded.user.username}, 
+        const text = `Hello ${req.encoded.user.username},
 we wanted to inform you that ${user.username} has published new list:
 ${updatedList.description}
 Get in now and be the firt one to register!`
