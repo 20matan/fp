@@ -56,7 +56,7 @@ app.use(cors())
 
 // mount all routes on /api path
 // app.post('/mail', (req, res, next) => {
-//   sendMail()
+sendMail('20matan@gmail.com')
 //   // setTimeout(() => {
 //   res.send('ok')
 //   // }, 3000)
