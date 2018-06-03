@@ -12,8 +12,12 @@ const transporter = nodemailer.createTransport({
 const FROM_SENDER = 'qqqafa@gmail.com'
 const WIN_SUBJECT = 'Wooow! you won the list!! ✔'
 
-const sendMail = (email, publisher, listId, cb = () => {}) => {
-  const WIN_TEXT = `${publisher} has published new list. click here to see it! https://w8-front.herokuapp.com/list/${listId}`
+const sendMail = (email, publisher, listId, title, cb = () => {}) => {
+  const WIN_TEXT = `Hey!
+we wanted to inform you that ${publisher} has published new list: ${title}
+
+Get in now and be the firt one to register!
+click here to see it! https://w8-front.herokuapp.com/list/${listId}`
 
   transporter.sendMail({
     from: FROM_SENDER,

@@ -52,12 +52,6 @@ function create(req, res, next) {
   newList.save()
   .then((savedList) => {
     // send emails to whoever subbed
-    User.get(creator)
-      .then((user) => {
-        user.subscribers.forEach((u) => {
-          sendEmailSub(u.email, user.username, savedList.id)
-        })
-      })
     // send emails for new list`
     res.json(savedList)
   })
@@ -175,18 +169,23 @@ function startList(req, res, next) {
   if (req.list.status !== 'approved') {
     throw new Error(`The list status is ${req.list.status}.`)
   }
+
+
+  User.get(creator)
+    .then((user) => {
+      user.subscribers.forEach((u) => {
+        sendEmailSub(u.email, user.username, savedList.id)
+      })
+    })
+
   return _update(req.list, { status: 'active' })
     .then((updatedList) => {
       const { creator } = updatedList
       console.log('creator', creator)
       return User.get(creator).then((user) => {
-        const text = `Hello ${req.encoded.user.username},
-we wanted to inform you that ${user.username} has published new list:
-${updatedList.description}
-Get in now and be the firt one to register!`
         const { subscribers } = user
         subscribers.forEach(s =>
-          sendEmail(s.email, `W8 - ${user.username} - New List`, text)
+          sendEmailSub(s.email, user.username, updatedList._id, updatedList.title)
         )
         res.json(updatedList)
       })
