@@ -18,6 +18,7 @@ import { validateToken } from '../server/helpers/auth'
 import listCtrl from '../server/controllers/list.controller'
 
 import sendMail from '../server/helpers/mail'
+import sendSMS from '../server/helpers/sms'
 
 const app = express()
 
@@ -59,6 +60,12 @@ app.get('/mail', (req, res) => {
   sendMail('20matan@gmail.com', '5b11385ae173820014a1866d', (a, b) => {
     res.send({ err: a, ans: b })
   })
+})
+
+app.get('/sms', (req, res) => {
+  sendSMS('+972523614888', 'BestList', '12345')
+  .then(r => res.send({ success: true, r }))
+  .catch(e => res.send({ success: false, e }))
 })
 // app.post('/mail', (req, res, next) => {
 //   // setTimeout(() => {

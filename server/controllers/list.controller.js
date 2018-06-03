@@ -171,14 +171,6 @@ function startList(req, res, next) {
     throw new Error(`The list status is ${req.list.status}.`)
   }
 
-
-  User.get(creator)
-    .then((user) => {
-      user.subscribers.forEach((u) => {
-        sendEmailSub(u.email, user.username, savedList.id)
-      })
-    })
-
   return _update(req.list, { status: 'active' })
     .then((updatedList) => {
       const { creator } = updatedList
