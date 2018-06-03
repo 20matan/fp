@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
   res.send('im alive!')
 })
 // parse body params and attache them to req.body
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: '500kb' }))
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(cookieParser())
