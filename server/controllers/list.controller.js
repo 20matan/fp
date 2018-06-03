@@ -3,6 +3,7 @@ import User from '../models/user.model'
 import { validate } from '../helpers/utils'
 import sendEmail from '../helpers/mail'
 import sendEmailSub from '../helpers/mail-sub'
+import sendEmailRedeemed from '../helpers/mail-redeemed'
 
 function load(req, res, next, id) {
   List.get(id)
@@ -198,11 +199,7 @@ function redeem(req, res, next) {
   if (req.list.currentRedeemers.indexOf(redeemerId) !== -1) {
     // return _update(req.list, {}).then(r => res.json(r)).catch(e => next(e))
     req.list.winners.push(redeemerId)
-    sendEmail(
-      req.encoded.user.email,
-      `You have redeemed list ${req.list.title}`,
-      `Congratz! You have redeemed the list ${req.list.title}.`
-    )
+    sendEmailRedeemed(req.encoded.user.email)
     return req.list.save().then(savedList => res.json(savedList)).catch((e) => {
       console.error('e on save', e)
       next(e)

@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 })
 
 const FROM_SENDER = 'qqqafa@gmail.com'
-const WIN_SUBJECT = 'Wooow! you won the list!! ✔'
+const WIN_SUBJECT = 'New list in W8 App!'
 
 const sendMail = (email, publisher, listId, title, cb = () => {}) => {
   const WIN_TEXT = `Hey!
