@@ -90,6 +90,8 @@ const ListSchema = new mongoose.Schema({
   hidden: {
     type: String
   }
+}, {
+  usePushEach: true
 })
 //
 // /**
@@ -143,7 +145,7 @@ ListSchema.statics = {
       .then((listFromDB) => {
         // console.log('list', id, listFromDB)
         if (listFromDB) {
-          console.log('RETURN LIST')
+          // console.log('RETURN LIST')
           return listFromDB
         }
         console.log('err')
