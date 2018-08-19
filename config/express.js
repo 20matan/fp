@@ -88,7 +88,7 @@ app.use('/api', (req, res, next) => {
     return next(new Error('No access-token header provided'))
   }
   const encodedData = validateToken(token)
-  console.log('encodedData', encodedData)
+  // console.log('encodedData', encodedData)
   req.encoded = { user: encodedData } // eslint-disable-line no-global-assign
   next()
 })

@@ -88,7 +88,7 @@ UserSchema.statics = {
       this.findById(id)
         // .exec()
         .then((user) => {
-          console.log('user', user, id)
+          // console.log('user', user, id)
           if (user) {
             return user
           }

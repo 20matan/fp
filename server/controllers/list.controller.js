@@ -233,7 +233,7 @@ const _fromSameLocation = (locationA, locationB) => {
       //   placesB[j]
       // )
       if (placesA[i] === placesB[j]) {
-        console.log('_fromSameLocation will return true now')
+        // console.log('_fromSameLocation will return true now')
         return true
       }
     }
@@ -321,7 +321,7 @@ async function getSimiliar(req, res, next) {
   try {
     if (listCache[req.params.listId]) {
       console.log('exist in cache')
-      return listCache[req.paarms.listId]
+      return listCache[req.params.listId]
     }
 
     console.log('will find in the cache')
