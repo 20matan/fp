@@ -335,11 +335,11 @@ async function getSimiliar(req, res, next) {
     const topSimiliar = lists.sort(_sortBySimiliarty(reqList)).slice(0, 20)
     listCache[req.params.listId] = topSimiliar
 
-    // clear the cache for this list every 10 minutes
+    // clear the cache for this list every 60 minutes
     setTimeout(() => {
       console.log('cleared the cache forr list id = ', req.params.listId)
       delete listCache[req.params.listId]
-    }, 1000 * 60 * 10)
+    }, 1000 * 60 * 60)
     return res.json(topSimiliar)
   } catch (e) {
     console.error('error', e)
