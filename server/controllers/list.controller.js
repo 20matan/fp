@@ -321,7 +321,7 @@ async function getSimiliar(req, res, next) {
   try {
     const fromCache = listCache[req.params.listId]
     if (fromCache) {
-      console.log('exist in cache', fromCache)
+      console.log('exist in cache')
       return res.json(fromCache)
     }
 
