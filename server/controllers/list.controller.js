@@ -5,6 +5,8 @@ import sendEmail from '../helpers/mail'
 import sendEmailSub from '../helpers/mail-sub'
 import sendEmailRedeemed from '../helpers/mail-redeemed'
 
+const listCache = {}
+
 function load(req, res, next, id) {
   List.get(id)
     .then((listFromDB) => {
@@ -317,6 +319,12 @@ async function getSimiliar(req, res, next) {
     return next('No list id parameter was supplied')
   }
   try {
+    if (listCache[req.params.listId]) {
+      console.log('exist in cache')
+      return listCache[req.paarms.listId]
+    }
+
+    console.log('will find in the cache')
     const lists = await List.getActiveExccept(req.params.listId)
     const reqList = await List.get(req.params.listId)
 
@@ -324,6 +332,13 @@ async function getSimiliar(req, res, next) {
 
     // find the most similiar
     const topSimiliar = lists.sort(_sortBySimiliarty(reqList)).slice(0, 20)
+    listCache[req.params.listId] = topSimiliar
+
+    // clear the cache for this list every 10 minutes
+    setTimeout(() => {
+      console.log('cleared the cache forr list id = ', req.params.listId)
+      delete listCache[req.params.listId]
+    }, 1000 * 60 * 10)
     return res.json(topSimiliar)
   } catch (e) {
     console.error('error', e)
